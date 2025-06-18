@@ -3,28 +3,398 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vòng Quay May Mắn</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Vòng Quay May Mắn - 2030 CONNECT & GROW</title>
+    <style>
+        :root {
+            --primary-bg: #0d1a2d;
+            --secondary-bg: #1f2e45;
+            --accent-blue: #00aaff;
+            --text-color: #ffffff;
+            --shadow-color: rgba(0, 170, 255, 0.5);
+            --success-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        .title-container {
+            margin-bottom: 20px;
+        }
+
+        .title-container h1 {
+            margin: 0;
+            font-size: 3.5em;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 8px var(--shadow-color), 0 0 15px var(--accent-blue);
+        }
+
+        .title-container p {
+            margin: 5px 0 15px 0;
+            font-size: 1.5em;
+            color: var(--success-color);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        #view-last-code-btn {
+            background: transparent;
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        #view-last-code-btn:hover {
+            background: var(--accent-blue);
+            color: var(--primary-bg);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        #wheel-canvas {
+            transition: transform 6s cubic-bezier(0.1, 0.7, 0.3, 1);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--shadow-color), inset 0 0 15px rgba(0,0,0,0.5);
+        }
+        
+        .pointer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 60px;
+            transform: translate(-50%, -100%);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            z-index: 10;
+        }
+
+        .pointer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--accent-blue), #ffdd00);
+            transform: scale(0.9);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            filter: drop-shadow(0 0 5px #ffdd00);
+        }
+
+        #spin-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid var(--text-color);
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 20;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            text-transform: uppercase;
+            white-space: pre-wrap;
+            line-height: 1.2;
+        }
+
+        #spin-btn:hover:not(:disabled) {
+            background-color: var(--accent-blue);
+            color: var(--primary-bg);
+            border-color: var(--primary-bg);
+        }
+        
+        #spin-btn:disabled {
+            cursor: not-allowed;
+            background-color: #2a3b52;
+            color: #8a9bb0;
+            border-color: #556a86;
+            font-size: 14px;
+        }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none; justify-content: center;
+            align-items: center; z-index: 1000;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-content {
+            background-color: var(--secondary-bg);
+            padding: 30px 40px; border-radius: 10px;
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 0 30px var(--shadow-color);
+            text-align: center; width: 90%; max-width: 400px;
+            transform: scale(0.8); transition: transform 0.3s ease;
+        }
+        .modal-overlay.show .modal-content { transform: scale(1); }
+        .modal-content h2 { margin-top: 0; color: var(--success-color); font-size: 28px; }
+        #prize-result { font-weight: bold; font-size: 20px; color: #fff; }
+        #promo-code {
+            display: inline-block; background-color: var(--primary-bg);
+            padding: 10px 20px; border-radius: 5px; font-size: 22px;
+            font-weight: bold; letter-spacing: 2px;
+            color: var(--success-color); margin-top: 10px;
+            border: 1px dashed var(--accent-blue);
+        }
+        .modal-close-btn {
+            margin-top: 25px; padding: 12px 30px; border: none; border-radius: 5px;
+            background-color: var(--accent-blue); color: var(--primary-bg);
+            font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: background-color 0.3s;
+            text-transform: uppercase;
+        }
+        .modal-close-btn:hover { background-color: #fff; }
+    </style>
 </head>
 <body>
-    <div class="container">
+
+    <div class="title-container">
         <h1>Vòng Quay May Mắn</h1>
-        <div class="wheel-container">
-            <canvas id="wheelCanvas" width="500" height="500"></canvas>
-            <button id="spinButton">Quay Ngay!</button>
-        </div>
-        <div id="result" class="hidden">
-            <h2>Chúc mừng! Bạn đã trúng:</h2>
-            <p id="prizeText"></p>
-            <p id="instructions"></p>
-        </div>
-        <div id="countdown" class="hidden">
-            <p>Bạn đã quay rồi. Vui lòng quay lại sau <span id="countdownTime"></span>.</p>
-        </div>
-        <div id="error" class="hidden">
-            <p id="errorMessage"></p>
+        <p>2030 Connect & Grow</p>
+        <button id="view-last-code-btn" class="hidden">Xem lại mã khuyến mãi</button>
+    </div>
+    
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <canvas id="wheel-canvas" width="500" height="500"></canvas>
+        <button id="spin-btn">Quay</button>
+    </div>
+
+    <div id="result-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>CHÚC MỪNG BẠN!</h2>
+            <p>Bạn đã trúng phần quà:</p>
+            <p id="prize-result"></p>
+            <p>Vui lòng đưa mã dưới đây cho nhân viên để được nhận khuyến mãi:</p>
+            <span id="promo-code"></span>
+            <button id="modal-close-btn" class="modal-close-btn">Đóng</button>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // DOM Elements
+        const canvas = document.getElementById('wheel-canvas');
+        const spinBtn = document.getElementById('spin-btn');
+        const resultModal = document.getElementById('result-modal');
+        const prizeResultEl = document.getElementById('prize-result');
+        const promoCodeEl = document.getElementById('promo-code');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const viewLastCodeBtn = document.getElementById('view-last-code-btn');
+        const ctx = canvas.getContext('2d');
+
+        // === LẤY THÔNG TIN USER TỪ URL ===
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id');
+        const phone = urlParams.get('phone');
+        // ================================
+
+        // Constants
+        const COOLDOWN_HOURS = 24;
+        const LAST_SPIN_KEY = 'lastSpinTimestamp';
+        const LAST_WIN_KEY = 'lastWinData';
+        let countdownInterval;
+        let isSpinning = false;
+
+        const prizes = [
+            { name: "Giảm 10% Giày", type: "10", probability: 0.10 },
+            { name: "Giảm 25% Giày", type: "25", probability: 0.02 },
+            { name: "Giảm 40% Giày", type: "40", probability: 0.01 },
+            { name: "Giảm 10% Thắt Lưng", type: "10", probability: 0.124 },
+            { name: "Giảm 25% Thắt Lưng", type: "25", probability: 0.082 },
+            { name: "Giảm 40% Thắt Lưng", type: "40", probability: 0.052 },
+            { name: "Giảm 10% Ví", type: "10", probability: 0.124 },
+            { name: "Giảm 20% Ví", type: "20", probability: 0.099 },
+            { name: "Giảm 25% Ví", type: "25", probability: 0.082 },
+            { name: "Giảm 40% Ví", type: "40", probability: 0.052 },
+            { name: "Tặng 1 Ví", type: "gift", probability: 0.001 },
+            { name: "Tặng 1 Thắt Lưng", type: "gift", probability: 0.001 }
+        ];
+        const colorMap = { '10':'#006699', '20':'#0077b3', '25':'#0088cc', '40':'#0099e6', 'gift':'#22a7f0' };
+        prizes.forEach(prize => prize.color = colorMap[prize.type]);
+
+        const numPrizes = prizes.length;
+        const anglePerPrize = (2 * Math.PI) / numPrizes;
+        const radius = canvas.width / 2;
+
+        function drawWheel() { /* ... function không đổi ... */
+            ctx.clearRect(0,0,500,500); ctx.save(); ctx.translate(radius,radius);
+            prizes.forEach((prize, i) => {
+                const sa = i*anglePerPrize; ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,radius-10,sa,sa+anglePerPrize);
+                ctx.closePath(); ctx.fillStyle=i%2===0?prize.color:lightenColor(prize.color,20); ctx.fill();
+                ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.rotate(sa+anglePerPrize/2);
+                ctx.textAlign='right';ctx.fillStyle='#fff';ctx.font='bold 14px Segoe UI';ctx.fillText(prize.name,radius-25,5);
+                ctx.restore();
+            });
+            ctx.restore();
+        }
+        function lightenColor(h,p){h=h.replace(/^#/,'');const r=parseInt(h.substring(0,2),16),g=parseInt(h.substring(2,4),16),b=parseInt(h.substring(4,6),16);const nR=Math.min(255,r+(255-r)*(p/100)),nG=Math.min(255,g+(255-g)*(p/100)),nB=Math.min(255,b+(255-b)*(p/100));return `#${Math.round(nR).toString(16).padStart(2,'0')}${Math.round(nG).toString(16).padStart(2,'0')}${Math.round(nB).toString(16).padStart(2,'0')}`}
+        function getWinner(){let r=Math.random(),c=0;for(let i=0;i<prizes.length;i++){c+=prizes[i].probability;if(r<c)return i}return Math.floor(Math.random()*prizes.length)}
+        function generatePromoCode(l=8){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';let r='';for(let i=0;i<l;i++)r+=c.charAt(Math.floor(Math.random()*c.length));return r.slice(0,4)+'-'+r.slice(4)}
+
+        // === HÀM GỬI DỮ LIỆU TỚI WEBHOOK ===
+        async function sendDataToWebhook(data) {
+            const webhookUrl = 'https://hook.us2.make.com/kyk3fhqa8sdy6nxqx2q9dmsjeat432k2';
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (response.ok) {
+                    console.log('Webhook sent successfully!');
+                } else {
+                    console.error('Webhook failed:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error sending webhook:', error);
+            }
+        }
+        // ===================================
+
+        function spin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            spinBtn.disabled = true;
+            
+            const winnerIndex = getWinner();
+            const totalRotationDeg = (parseFloat(canvas.style.transform.replace(/[^0-9.-]/g, '')) || 0) + (10 * 360) + (360 - (winnerIndex * anglePerPrize * 180 / Math.PI) - ((Math.random() - 0.5) * anglePerPrize * 0.8 * 180 / Math.PI));
+            canvas.style.transform = `rotate(${totalRotationDeg}deg)`;
+
+            setTimeout(() => {
+                const winningPrize = prizes[winnerIndex];
+                const newPromoCode = generatePromoCode();
+
+                // 1. GỬI DỮ LIỆU ĐẾN WEBHOOK
+                const payload = {
+                    userId: userId,
+                    phone: phone,
+                    prizeName: winningPrize.name,
+                    promoCode: newPromoCode,
+                    spinTimestamp: new Date().toISOString()
+                };
+                sendDataToWebhook(payload);
+
+                // 2. HIỂN THỊ KẾT QUẢ CHO USER
+                showResultModal(winningPrize.name, newPromoCode);
+                
+                // 3. LƯU TRẠNG THÁI VÀ BẮT ĐẦU ĐẾM NGƯỢC
+                localStorage.setItem(LAST_SPIN_KEY, Date.now());
+                localStorage.setItem(LAST_WIN_KEY, JSON.stringify({ prizeName: winningPrize.name, promoCode: newPromoCode }));
+                checkCooldown();
+                
+                isSpinning = false;
+                
+                canvas.style.transition = 'none';
+                const actualRotationDeg = totalRotationDeg % 360;
+                canvas.style.transform = `rotate(${actualRotationDeg}deg)`;
+            }, 6100); 
+        }
+
+        function showResultModal(prizeName, promoCode) {
+            prizeResultEl.textContent = prizeName;
+            promoCodeEl.textContent = promoCode;
+            resultModal.classList.add('show');
+        }
+
+        function closeModal() {
+            resultModal.classList.remove('show');
+        }
+
+        function checkCooldown() {
+            const lastSpinTimestamp = localStorage.getItem(LAST_SPIN_KEY);
+            if (!lastSpinTimestamp) {
+                spinBtn.disabled = false;
+                spinBtn.textContent = "Quay";
+                viewLastCodeBtn.classList.add('hidden');
+                return;
+            }
+            const cooldownPeriod = COOLDOWN_HOURS * 60 * 60 * 1000;
+            const timeElapsed = Date.now() - lastSpinTimestamp;
+            if (timeElapsed < cooldownPeriod) {
+                spinBtn.disabled = true;
+                viewLastCodeBtn.classList.remove('hidden');
+                if (countdownInterval) clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    const remaining = cooldownPeriod - (Date.now() - lastSpinTimestamp);
+                    if (remaining <= 0) {
+                        clearInterval(countdownInterval);
+                        spinBtn.disabled = false;
+                        spinBtn.style.fontSize = '24px';
+                        spinBtn.textContent = "Quay";
+                        viewLastCodeBtn.classList.add('hidden');
+                        localStorage.removeItem(LAST_SPIN_KEY);
+                        localStorage.removeItem(LAST_WIN_KEY);
+                    } else {
+                        const h = String(Math.floor(remaining / 3600000)).padStart(2,'0');
+                        const m = String(Math.floor((remaining % 3600000) / 60000)).padStart(2,'0');
+                        const s = String(Math.floor((remaining % 60000) / 1000)).padStart(2,'0');
+                        spinBtn.textContent = `Vui lòng\nquay lại sau\n${h}:${m}:${s}`;
+                    }
+                }, 1000);
+            } else {
+                spinBtn.disabled = false;
+                spinBtn.style.fontSize = '24px';
+                spinBtn.textContent = "Quay";
+                viewLastCodeBtn.classList.add('hidden');
+                localStorage.removeItem(LAST_SPIN_KEY);
+                localStorage.removeItem(LAST_WIN_KEY);
+            }
+        }
+        
+        viewLastCodeBtn.addEventListener('click', () => {
+            const lastWinData = localStorage.getItem(LAST_WIN_KEY);
+            if (lastWinData) {
+                const { prizeName, promoCode } = JSON.parse(lastWinData);
+                showResultModal(prizeName, promoCode);
+            }
+        });
+
+        spinBtn.addEventListener('click', spin);
+        modalCloseBtn.addEventListener('click', closeModal);
+        resultModal.addEventListener('click', (e) => { if (e.target === resultModal) closeModal(); });
+
+        drawWheel();
+        checkCooldown();
+    </script>
 </body>
 </html>
