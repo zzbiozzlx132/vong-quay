@@ -10,8 +10,8 @@
             --secondary-bg: #1f2e45;
             --accent-blue: #00aaff;
             --text-color: #ffffff;
-            --shadow-color: rgba(0, 170, 255, 0.5);
             --super-rare-color: #ffc107; /* Màu cho quà siêu hiếm */
+            --shadow-color: rgba(0, 170, 255, 0.5);
         }
 
         body {
@@ -22,7 +22,8 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
+            box-sizing: border-box;
             background-color: var(--primary-bg);
             color: var(--text-color);
             overflow-x: hidden;
@@ -31,12 +32,12 @@
 
         .title-container { margin-bottom: 20px; }
         .title-container h1 {
-            margin: 0; font-size: 3.5em; font-weight: 900;
+            margin: 0; font-size: 3em; font-weight: 900;
             text-transform: uppercase; color: #fff;
             text-shadow: 0 0 8px var(--shadow-color), 0 0 15px var(--accent-blue);
         }
         .title-container p {
-            margin: 5px 0 15px 0; font-size: 1.5em;
+            margin: 5px 0 15px 0; font-size: 1.2em;
             color: var(--super-rare-color); letter-spacing: 3px;
             text-transform: uppercase; font-weight: bold;
         }
@@ -50,19 +51,25 @@
         .hidden { display: none !important; }
 
         .wheel-container {
-            position: relative; width: 500px; height: 500px;
+            position: relative;
+            width: 90vw;
+            max-width: 500px;
+            aspect-ratio: 1 / 1;
             display: flex; justify-content: center;
             align-items: center; flex-direction: column;
             flex-shrink: 0;
         }
         #wheel-canvas {
+            width: 100%; height: 100%;
             transition: transform 6s cubic-bezier(0.1, 0.7, 0.3, 1);
             border-radius: 50%;
             box-shadow: 0 0 20px var(--shadow-color), inset 0 0 15px rgba(0,0,0,0.5);
         }
+
         .pointer {
             position: absolute; top: 50%; left: 50%;
-            width: 50px; height: 60px;
+            width: 10%; height: 12%;
+            max-width: 50px; max-height: 60px;
             transform: translate(-50%, -100%);
             clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             z-index: 10;
@@ -78,9 +85,11 @@
         #spin-btn {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 100px; height: 100px; border-radius: 50%;
-            border: 5px solid var(--text-color); background-color: var(--secondary-bg);
-            color: var(--text-color); font-size: 24px; font-weight: bold;
+            width: 20%; height: 20%;
+            max-width: 100px; max-height: 100px;
+            border-radius: 50%; border: 5px solid var(--text-color);
+            background-color: var(--secondary-bg); color: var(--text-color);
+            font-size: 1.5rem; font-weight: bold;
             cursor: pointer; z-index: 20;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
@@ -92,7 +101,8 @@
         }
         #spin-btn:disabled {
             cursor: not-allowed; background-color: #2a3b52;
-            color: #8a9bb0; border-color: #556a86; font-size: 14px;
+            color: #8a9bb0; border-color: #556a86;
+            font-size: 0.9rem;
         }
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -125,6 +135,18 @@
             transition: background-color 0.3s; text-transform: uppercase;
         }
         .modal-close-btn:hover { background-color: #fff; }
+
+        @media (max-width: 600px) {
+            .title-container h1 { font-size: 2em; }
+            .title-container p { font-size: 1em; }
+            #spin-btn { font-size: 1rem; border-width: 3px; }
+            #spin-btn:disabled { font-size: 0.7rem; }
+            .modal-content { padding: 20px; }
+            .modal-content h2 { font-size: 22px; }
+            #prize-result { font-size: 16px; }
+            #promo-code { font-size: 18px; }
+            .modal-close-btn { font-size: 14px; }
+        }
     </style>
 </head>
 <body>
@@ -137,7 +159,7 @@
     
     <div class="wheel-container">
         <div class="pointer"></div>
-        <canvas id="wheel-canvas" width="500" height="500"></canvas>
+        <canvas id="wheel-canvas"></canvas>
         <button id="spin-btn">Quay</button>
     </div>
 
@@ -155,6 +177,7 @@
     <script>
         const canvas = document.getElementById('wheel-canvas');
         const spinBtn = document.getElementById('spin-btn');
+        const wheelContainer = document.querySelector('.wheel-container');
         const resultModal = document.getElementById('result-modal');
         const prizeResultEl = document.getElementById('prize-result');
         const promoCodeEl = document.getElementById('promo-code');
@@ -173,39 +196,39 @@
         let isSpinning = false;
 
         // =======================================================
-        // === DANH SÁCH QUÀ TẶNG VÀ TỶ LỆ CUỐI CÙNG - TỔNG 100% ===
+        // === DANH SÁCH QUÀ TẶNG VÀ TỶ LỆ MỚI NHẤT - TỔNG 100% ===
         // =======================================================
         const prizes = [
-            // Phổ thông (55%)
-            { name: "Voucher giảm giá 10%", type: "v10", probability: 0.20 },
-            
-            // Thường (30%)
             { name: "Voucher giảm giá 20%", type: "v20", probability: 0.40 },
-            
-            // Khá hiếm (13.8%)
-            { name: "Voucher giảm giá 30%", type: "v30", probability: 0.38 },
-            
-            // Siêu hiếm (Tổng 1.2% - mỗi giải 0.4%)
-            { name: "Voucher giảm giá 40%", type: "super_rare", probability: 0.012 },
-            { name: "Tặng 1 ví da", type: "super_rare", probability: 0.004 },
-            { name: "Tặng 1 thắt lưng", type: "super_rare", probability: 0.004 }
+            { name: "Voucher giảm giá 30%", type: "v30", probability: 0.40 },
+            { name: "Voucher giảm giá 10%", type: "v10", probability: 0.1072 },
+            { name: "Voucher giảm giá 40%", type: "v40", probability: 0.08 },
+            { name: "Voucher giảm giá 50%", type: "super_rare", probability: 0.012 },
+            { name: "Tặng 1 ví da",         type: "super_rare", probability: 0.0004 },
+            { name: "Tặng 1 thắt lưng",    type: "super_rare", probability: 0.0004 }
         ];
         // =======================================================
 
         const colorMap = {
-            'v10': '#006699',
+            'v10': '#006187',
             'v20': '#0077b3',
             'v30': '#0088cc',
-            'super_rare': '#ffc107' // Màu vàng nổi bật cho tất cả quà siêu hiếm
+            'v40': '#0099e6',
+            'super_rare': '#ffc107' // Màu vàng cho 50% và quà tặng
         };
         prizes.forEach(prize => prize.color = colorMap[prize.type]);
 
         const numPrizes = prizes.length;
         const anglePerPrize = (2 * Math.PI) / numPrizes;
-        const radius = canvas.width / 2;
+        let radius;
 
         function drawWheel() {
-            ctx.clearRect(0,0,500,500); ctx.save(); ctx.translate(radius,radius);
+            const size = wheelContainer.clientWidth;
+            canvas.width = size;
+            canvas.height = size;
+            radius = size / 2;
+
+            ctx.clearRect(0,0,size,size); ctx.save(); ctx.translate(radius,radius);
             prizes.forEach((prize, i) => {
                 const sa = i * anglePerPrize; ctx.beginPath(); ctx.moveTo(0,0);
                 ctx.arc(0,0,radius - 10, sa, sa + anglePerPrize); ctx.closePath();
@@ -213,46 +236,39 @@
                 ctx.strokeStyle='#fff'; ctx.lineWidth = 2; ctx.stroke(); ctx.save();
                 ctx.rotate(sa + anglePerPrize / 2);
                 ctx.textAlign = 'right'; ctx.fillStyle = '#fff';
-                ctx.font = 'bold 18px Segoe UI';
+                
+                const fontSize = Math.floor(radius * 0.075);
+                ctx.font = `bold ${fontSize}px Segoe UI`;
+                const textOffset = radius * 0.1;
+
                 const nameParts = prize.name.split(' ');
                 if (nameParts.length >= 3) {
                     const line1 = nameParts.slice(0, nameParts.length - 1).join(' ');
                     const line2 = nameParts[nameParts.length - 1];
-                    ctx.fillText(line1, radius - 25, -8);
-                    ctx.fillText(line2, radius - 25, 18);
+                    ctx.fillText(line1, radius - textOffset, -fontSize * 0.4);
+                    ctx.fillText(line2, radius - textOffset, fontSize * 0.8);
                 } else {
-                    ctx.fillText(prize.name, radius - 25, 5);
+                    ctx.fillText(prize.name, radius - textOffset, fontSize * 0.3);
                 }
                 ctx.restore();
             });
             ctx.restore();
         }
+        
+        window.addEventListener('resize', drawWheel);
 
         function lightenColor(h,p){h=h.replace(/^#/,'');const r=parseInt(h.substring(0,2),16),g=parseInt(h.substring(2,4),16),b=parseInt(h.substring(4,6),16);const nR=Math.min(255,r+(255-r)*(p/100)),nG=Math.min(255,g+(255-g)*(p/100)),nB=Math.min(255,b+(255-b)*(p/100));return `#${Math.round(nR).toString(16).padStart(2,'0')}${Math.round(nG).toString(16).padStart(2,'0')}${Math.round(nB).toString(16).padStart(2,'0')}`}
-        
-        function getWinner(){ const r = Math.random(); let c=0; for(let i=0; i<prizes.length; i++){ c += prizes[i].probability; if(r < c) return i; }}
-        
+        function getWinner(){ const r=Math.random();let c=0;for(let i=0;i<prizes.length;i++){c+=prizes[i].probability;if(r<c)return i;}}
         function generatePromoCode(l=8){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';let r='';for(let i=0;i<l;i++)r+=c.charAt(Math.floor(Math.random()*c.length));return r.slice(0,4)+'-'+r.slice(4)}
-
-        async function sendDataToWebhook(data) {
-            const webhookUrl = 'https://hook.us2.make.com/kyk3fhqa8sdy6nxqx2q9dmsjeat432k2';
-            try {
-                const response = await fetch(webhookUrl, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (response.ok) { console.log('Webhook sent successfully!'); }
-                else { console.error('Webhook failed:', response.statusText); }
-            } catch (error) { console.error('Error sending webhook:', error); }
-        }
-
+        async function sendDataToWebhook(a){const t="https://hook.us2.make.com/kyk3fhqa8sdy6nxqx2q9dmsjeat432k2";try{const o=await fetch(t,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(a)});o.ok?console.log("Webhook sent successfully!"):console.error("Webhook failed:",o.statusText)}catch(o){console.error("Error sending webhook:",o)}}
+        
         function spin() {
             if (isSpinning) return;
             isSpinning = true;
             spinBtn.disabled = true;
             
             const winnerIndex = getWinner();
-            const totalRotationDeg = (parseFloat(canvas.style.transform.replace(/[^0-9.-]/g, '')) || 0) + (10 * 360) + (360 - (winnerIndex * anglePerPrize * 180 / Math.PI) - ((Math.random() - 0.5) * anglePerPrize * 0.8 * 180 / Math.PI));
+            const totalRotationDeg = (parseFloat(canvas.style.transform.replace(/[^0-9.-]/g,''))||0)+3600+(360-(winnerIndex*anglePerPrize*180/Math.PI)-((Math.random()-.5)*anglePerPrize*.8*180/Math.PI));
             canvas.style.transform = `rotate(${totalRotationDeg}deg)`;
 
             setTimeout(() => {
@@ -260,8 +276,8 @@
                 const newPromoCode = generatePromoCode();
 
                 const payload = {
-                    userId: userId, phone: phone, prizeName: winningPrize.name,
-                    promoCode: newPromoCode, spinTimestamp: new Date().toISOString()
+                    userId:userId,phone:phone,prizeName:winningPrize.name,
+                    promoCode:newPromoCode,spinTimestamp:new Date().toISOString()
                 };
                 sendDataToWebhook(payload);
 
@@ -272,61 +288,14 @@
                 checkCooldown();
                 
                 isSpinning = false;
-                
                 canvas.style.transition = 'none';
-                const actualRotationDeg = totalRotationDeg % 360;
-                canvas.style.transform = `rotate(${actualRotationDeg}deg)`;
+                canvas.style.transform = `rotate(${totalRotationDeg % 360}deg)`;
             }, 6100); 
         }
 
-        function showResultModal(prizeName, promoCode) {
-            prizeResultEl.textContent = prizeName;
-            promoCodeEl.textContent = promoCode;
-            resultModal.classList.add('show');
-        }
-
-        function closeModal() { resultModal.classList.remove('show'); }
-
-        function checkCooldown() {
-            const lastSpinTimestamp = localStorage.getItem(LAST_SPIN_KEY);
-            if (!lastSpinTimestamp) {
-                spinBtn.disabled = false;
-                spinBtn.textContent = "Quay";
-                viewLastCodeBtn.classList.add('hidden');
-                return;
-            }
-            const cooldownPeriod = COOLDOWN_HOURS * 60 * 60 * 1000;
-            const timeElapsed = Date.now() - lastSpinTimestamp;
-            if (timeElapsed < cooldownPeriod) {
-                spinBtn.disabled = true;
-                viewLastCodeBtn.classList.remove('hidden');
-                if (countdownInterval) clearInterval(countdownInterval);
-                countdownInterval = setInterval(() => {
-                    const remaining = cooldownPeriod - (Date.now() - lastSpinTimestamp);
-                    if (remaining <= 0) {
-                        clearInterval(countdownInterval);
-                        spinBtn.disabled = false;
-                        spinBtn.style.fontSize = '24px';
-                        spinBtn.textContent = "Quay";
-                        viewLastCodeBtn.classList.add('hidden');
-                        localStorage.removeItem(LAST_SPIN_KEY);
-                        localStorage.removeItem(LAST_WIN_KEY);
-                    } else {
-                        const h = String(Math.floor(remaining / 3600000)).padStart(2,'0');
-                        const m = String(Math.floor((remaining % 3600000) / 60000)).padStart(2,'0');
-                        const s = String(Math.floor((remaining % 60000) / 1000)).padStart(2,'0');
-                        spinBtn.textContent = `Vui lòng\nquay lại sau\n${h}:${m}:${s}`;
-                    }
-                }, 1000);
-            } else {
-                spinBtn.disabled = false;
-                spinBtn.style.fontSize = '24px';
-                spinBtn.textContent = "Quay";
-                viewLastCodeBtn.classList.add('hidden');
-                localStorage.removeItem(LAST_SPIN_KEY);
-                localStorage.removeItem(LAST_WIN_KEY);
-            }
-        }
+        function showResultModal(a,t){prizeResultEl.textContent=a;promoCodeEl.textContent=t;resultModal.classList.add("show")}
+        function closeModal(){resultModal.classList.remove("show")}
+        function checkCooldown(){const a=localStorage.getItem(LAST_SPIN_KEY);if(!a)return spinBtn.disabled=!1,spinBtn.textContent="Quay",void viewLastCodeBtn.classList.add("hidden");const t=864e5,o=Date.now()-a;if(o<t){spinBtn.disabled=!0,viewLastCodeBtn.classList.remove("hidden"),countdownInterval&&clearInterval(countdownInterval),countdownInterval=setInterval(()=>{const a=t-(Date.now()-lastSpinTimestamp);a<=0?(clearInterval(countdownInterval),spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)):(spinBtn.style.fontSize="0.9rem",spinBtn.textContent=`Vui lòng\nquay lại sau\n${String(Math.floor(a/36e5)).padStart(2,"0")}:${String(Math.floor(a%36e5/6e4)).padStart(2,"0")}:${String(Math.floor(a%6e4/1e3)).padStart(2,"0")}`)},1e3)}else spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)}
         
         viewLastCodeBtn.addEventListener('click', () => {
             const lastWinData = localStorage.getItem(LAST_WIN_KEY);
