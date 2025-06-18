@@ -4,18 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vòng Quay May Mắn - 2030 CONNECT & GROW</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary-bg: #0d1a2d;
             --secondary-bg: #1f2e45;
             --accent-blue: #00aaff;
             --text-color: #ffffff;
-            --super-rare-color: #ffc107; /* Màu cho quà siêu hiếm */
+            --super-rare-color: #ffc107;
             --shadow-color: rgba(0, 170, 255, 0.5);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* SỬ DỤNG FONT POPPINS MỚI */
+            font-family: 'Poppins', sans-serif;
             display: flex;
             flex-direction: column; 
             justify-content: center;
@@ -32,19 +37,20 @@
 
         .title-container { margin-bottom: 20px; }
         .title-container h1 {
-            margin: 0; font-size: 3em; font-weight: 900;
+            margin: 0; font-size: 3em; font-weight: 700; /* Bold của Poppins */
             text-transform: uppercase; color: #fff;
             text-shadow: 0 0 8px var(--shadow-color), 0 0 15px var(--accent-blue);
         }
         .title-container p {
             margin: 5px 0 15px 0; font-size: 1.2em;
             color: var(--super-rare-color); letter-spacing: 3px;
-            text-transform: uppercase; font-weight: bold;
+            text-transform: uppercase; font-weight: 500; /* Medium của Poppins */
         }
         #view-last-code-btn {
             background: transparent; border: 2px solid var(--accent-blue);
             color: var(--accent-blue); padding: 8px 16px; border-radius: 5px;
-            cursor: pointer; font-size: 14px; font-weight: bold;
+            cursor: pointer; font-size: 14px; font-weight: 700;
+            font-family: 'Poppins', sans-serif; /* Đảm bảo nút cũng dùng font mới */
             transition: all 0.3s ease;
         }
         #view-last-code-btn:hover { background: var(--accent-blue); color: var(--primary-bg); }
@@ -52,7 +58,8 @@
 
         .wheel-container {
             position: relative;
-            width: 90vw;
+            /* TĂNG KÍCH THƯỚC VÒNG QUAY LÊN 98% */
+            width: 98vw; 
             max-width: 500px;
             aspect-ratio: 1 / 1;
             display: flex; justify-content: center;
@@ -89,7 +96,8 @@
             max-width: 100px; max-height: 100px;
             border-radius: 50%; border: 5px solid var(--text-color);
             background-color: var(--secondary-bg); color: var(--text-color);
-            font-size: 1.5rem; font-weight: bold;
+            font-size: 1.5rem; font-weight: 700;
+            font-family: 'Poppins', sans-serif;
             cursor: pointer; z-index: 20;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
@@ -120,24 +128,25 @@
         }
         .modal-overlay.show .modal-content { transform: scale(1); }
         .modal-content h2 { margin-top: 0; color: var(--super-rare-color); font-size: 28px; }
-        #prize-result { font-weight: bold; font-size: 20px; color: #fff; }
+        #prize-result { font-weight: 500; font-size: 20px; color: #fff; }
         #promo-code {
             display: inline-block; background-color: var(--primary-bg);
             padding: 10px 20px; border-radius: 5px; font-size: 22px;
-            font-weight: bold; letter-spacing: 2px;
+            font-weight: 700; letter-spacing: 2px;
             color: var(--super-rare-color); margin-top: 10px;
             border: 1px dashed var(--accent-blue);
         }
         .modal-close-btn {
             margin-top: 25px; padding: 12px 30px; border: none; border-radius: 5px;
             background-color: var(--accent-blue); color: var(--primary-bg);
-            font-size: 16px; font-weight: bold; cursor: pointer;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            font-family: 'Poppins', sans-serif;
             transition: background-color 0.3s; text-transform: uppercase;
         }
         .modal-close-btn:hover { background-color: #fff; }
 
         @media (max-width: 600px) {
-            .title-container h1 { font-size: 2em; }
+            .title-container h1 { font-size: 2.2em; }
             .title-container p { font-size: 1em; }
             #spin-btn { font-size: 1rem; border-width: 3px; }
             #spin-btn:disabled { font-size: 0.7rem; }
@@ -178,6 +187,7 @@
         const canvas = document.getElementById('wheel-canvas');
         const spinBtn = document.getElementById('spin-btn');
         const wheelContainer = document.querySelector('.wheel-container');
+        // ... Các hằng số DOM element khác ...
         const resultModal = document.getElementById('result-modal');
         const prizeResultEl = document.getElementById('prize-result');
         const promoCodeEl = document.getElementById('promo-code');
@@ -195,9 +205,6 @@
         let countdownInterval;
         let isSpinning = false;
 
-        // =======================================================
-        // === DANH SÁCH QUÀ TẶNG VÀ TỶ LỆ MỚI NHẤT - TỔNG 100% ===
-        // =======================================================
         const prizes = [
             { name: "Voucher giảm giá 20%", type: "v20", probability: 0.40 },
             { name: "Voucher giảm giá 30%", type: "v30", probability: 0.40 },
@@ -207,14 +214,10 @@
             { name: "Tặng 1 ví da",         type: "super_rare", probability: 0.0004 },
             { name: "Tặng 1 thắt lưng",    type: "super_rare", probability: 0.0004 }
         ];
-        // =======================================================
 
         const colorMap = {
-            'v10': '#006187',
-            'v20': '#0077b3',
-            'v30': '#0088cc',
-            'v40': '#0099e6',
-            'super_rare': '#ffc107' // Màu vàng cho 50% và quà tặng
+            'v10': '#006187', 'v20': '#0077b3', 'v30': '#0088cc', 'v40': '#0099e6',
+            'super_rare': '#ffc107'
         };
         prizes.forEach(prize => prize.color = colorMap[prize.type]);
 
@@ -224,8 +227,7 @@
 
         function drawWheel() {
             const size = wheelContainer.clientWidth;
-            canvas.width = size;
-            canvas.height = size;
+            canvas.width = size; canvas.height = size;
             radius = size / 2;
 
             ctx.clearRect(0,0,size,size); ctx.save(); ctx.translate(radius,radius);
@@ -238,7 +240,8 @@
                 ctx.textAlign = 'right'; ctx.fillStyle = '#fff';
                 
                 const fontSize = Math.floor(radius * 0.075);
-                ctx.font = `bold ${fontSize}px Segoe UI`;
+                // CẬP NHẬT FONT CHỮ TRÊN VÒNG QUAY
+                ctx.font = `700 ${fontSize}px Poppins`;
                 const textOffset = radius * 0.1;
 
                 const nameParts = prize.name.split(' ');
@@ -274,19 +277,15 @@
             setTimeout(() => {
                 const winningPrize = prizes[winnerIndex];
                 const newPromoCode = generatePromoCode();
-
                 const payload = {
                     userId:userId,phone:phone,prizeName:winningPrize.name,
                     promoCode:newPromoCode,spinTimestamp:new Date().toISOString()
                 };
                 sendDataToWebhook(payload);
-
                 showResultModal(winningPrize.name, newPromoCode);
-                
                 localStorage.setItem(LAST_SPIN_KEY, Date.now());
                 localStorage.setItem(LAST_WIN_KEY, JSON.stringify({ prizeName: winningPrize.name, promoCode: newPromoCode }));
                 checkCooldown();
-                
                 isSpinning = false;
                 canvas.style.transition = 'none';
                 canvas.style.transform = `rotate(${totalRotationDeg % 360}deg)`;
