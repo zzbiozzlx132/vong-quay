@@ -235,19 +235,28 @@
         let countdownInterval;
         let isSpinning = false;
 
+        // === MẢNG PRIZES ĐÃ ĐƯỢC SỬA LỖI VÀ CÂN BẰNG LẠI TỶ LỆ - TỔNG LÀ 100% ===
+        // =========================================================================
         const prizes = [
-            { name: "Giảm 10% Giày", type: "10", probability: 0.10 },
-            { name: "Giảm 25% Giày", type: "25", probability: 0.02 },
-            { name: "Giảm 40% Giày", type: "40", probability: 0.01 },
-            { name: "Giảm 10% Thắt Lưng", type: "10", probability: 0.124 },
-            { name: "Giảm 25% Thắt Lưng", type: "25", probability: 0.082 },
-            { name: "Giảm 40% Thắt Lưng", type: "40", probability: 0.052 },
-            { name: "Giảm 10% Ví", type: "10", probability: 0.124 },
-            { name: "Giảm 20% Ví", type: "20", probability: 0.099 },
-            { name: "Giảm 25% Ví", type: "25", probability: 0.082 },
-            { name: "Giảm 40% Ví", type: "40", probability: 0.052 },
-            { name: "Tặng 1 Ví", type: "gift", probability: 0.001 },
-            { name: "Tặng 1 Thắt Lưng", type: "gift", probability: 0.001 }
+            // Quà phổ thông (65%)
+            { name: "Giảm 10% Giày", type: "10", probability: 0.20 },      // 20%
+            { name: "Giảm 10% Thắt Lưng", type: "10", probability: 0.20 }, // 20%
+            { name: "Giảm 10% Ví", type: "10", probability: 0.20 },         // 20%
+
+            // Quà khá (28%)
+            { name: "Giảm 20% Ví", type: "20", probability: 0.12 },         // 12%
+            { name: "Giảm 25% Thắt Lưng", type: "25", probability: 0.10 }, // 10%
+            { name: "Giảm 25% Ví", type: "25", probability: 0.11 },         // 11%
+            
+            // Quà hiếm (6%)
+            { name: "Giảm 25% Giày", type: "25", probability: 0.022 },      // 2.2%
+            { name: "Giảm 40% Thắt Lưng", type: "40", probability: 0.022 }, // 2.2%
+            { name: "Giảm 40% Ví", type: "40", probability: 0.02 },         // 2%
+
+            // Quà siêu hiếm (1%)
+            { name: "Giảm 40% Giày", type: "40", probability: 0.008 },     // 0.4%
+            { name: "Tặng 1 Ví", type: "gift", probability: 0.001 },          // 0.1%
+            { name: "Tặng 1 Thắt Lưng", type: "gift", probability: 0.001 }  // 0.1%
         ];
         const colorMap = { '10':'#006699', '20':'#0077b3', '25':'#0088cc', '40':'#0099e6', 'gift':'#22a7f0' };
         prizes.forEach(prize => prize.color = colorMap[prize.type]);
