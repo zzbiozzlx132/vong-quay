@@ -123,7 +123,7 @@ function updateCountdown() {
 // Phần này chỉ là placeholder cho logic giao tiếp.
 
 // === URL Google Apps Script của bạn (ĐÃ ĐƯỢC CẬP NHẬT TỪ CODE CỦA BẠN) ===
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdMj4DHrZyFoSz8vDydxdfQnzNeAS_iAxSMF0OgB0elX4zqp76TMKuBdHx8TM-TF81-w/exec'; 
+const response = await fetch('https://script.google.com/macros/s/AKfycbzK5Cg_zVAmSemFpe1nbBKB8Zoi-fAijFbsp_OAkmvB2HRYbncSaHpG2dh-t4SJXRXTwA/exec', { // Thay thế bằng URL Google Apps Script của bạn
 
 // Hàm để kiểm tra xem quà tặng unique còn hay không và người dùng đã nhận chưa
 async function checkAndRecordPrize(prizeValue, userId) {
