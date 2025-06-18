@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vòng Quay May Mắn</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Vòng Quay May Mắn</h1>
+        <div class="wheel-container">
+            <canvas id="wheelCanvas" width="500" height="500"></canvas>
+            <button id="spinButton">Quay Ngay!</button>
+        </div>
+        <div id="result" class="hidden">
+            <h2>Chúc mừng! Bạn đã trúng:</h2>
+            <p id="prizeText"></p>
+            <p id="instructions"></p>
+        </div>
+        <div id="countdown" class="hidden">
+            <p>Bạn đã quay rồi. Vui lòng quay lại sau <span id="countdownTime"></span>.</p>
+        </div>
+        <div id="error" class="hidden">
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
