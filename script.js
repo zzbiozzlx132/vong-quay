@@ -122,27 +122,44 @@ function updateCountdown() {
 // Hướng dẫn chi tiết về cách thiết lập Google Apps Script sẽ ở bước 3.
 // Phần này chỉ là placeholder cho logic giao tiếp.
 
+// === URL Google Apps Script của bạn (ĐÃ ĐƯỢC CẬP NHẬT TỪ CODE CỦA BẠN) ===
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdMj4DHrZyFoSz8vDydxdfQnzNeAS_iAxSMF0OgB0elX4zqp76TMKuBdHx8TM-TF81-w/exec'; 
+
 // Hàm để kiểm tra xem quà tặng unique còn hay không và người dùng đã nhận chưa
-// (Cần thay đổi YOUR_WEB_APP_URL bằng URL Google Apps Script của bạn)
 async function checkAndRecordPrize(prizeValue, userId) {
+    console.log('--- checkAndRecordPrize function called ---');
+    console.log('Prize Value:', prizeValue, 'User ID:', userId);
+
     // Nếu prize không phải unique, luôn cho phép
-    if (!prizes.find(p => p.value === prizeValue && p.unique)) {
+    if (!prizes.find(p => p.value === prizeValue && p.unique) && prizeValue !== 'check_spin_status') {
+        console.log('Prize is not unique or is a status check. Skipping backend check.');
         return { success: true, message: 'Prize available.' };
     }
 
     try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbzdMj4DHrZyFoSz8vDydxdfQnzNeAS_iAxSMF0OgB0elX4zqp76TMKuBdHx8TM-TF81-w/exec', { // Thay thế bằng URL Google Apps Script của bạn
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_WEB_APP_URL_PLACEHOLDER') { // Dòng này sẽ giúp phát hiện nếu URL chưa được thay thế
+            console.error('Google Apps Script URL is not configured!');
+            return { success: false, message: 'Lỗi cấu hình: URL Google Apps Script chưa được thiết lập.' };
+        }
+        
+        const payload = { action: (prizeValue === 'check_spin_status' ? 'check_spin_status' : 'checkAndRecord'), prize: prizeValue, userId: userId };
+        console.log('Sending POST request to Apps Script with payload:', payload);
+
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ action: 'checkAndRecord', prize: prizeValue, userId: userId }),
+            body: JSON.stringify(payload),
         });
+        
+        console.log('Received response from Apps Script. Status:', response.status);
         const data = await response.json();
+        console.log('Response data from Apps Script:', data);
         return data;
     } catch (error) {
-        console.error('Error checking/recording prize:', error);
-        return { success: false, message: 'Lỗi hệ thống khi kiểm tra quà tặng.' };
+        console.error('Error during checkAndRecordPrize fetch:', error);
+        return { success: false, message: 'Lỗi hệ thống khi kiểm tra quà tặng. Vui lòng thử lại.' };
     }
 }
 
@@ -151,15 +168,21 @@ async function checkAndRecordPrize(prizeValue, userId) {
 // Ví dụ: yourwebsite.com?user_id=ABC123XYZ
 function getUserIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('user_id');
+    const userId = urlParams.get('user_id');
+    console.log('getUserIdFromUrl called. User ID found:', userId);
+    return userId;
 }
 
 // Hàm quay vòng quay
 async function spinWheel() {
+    console.log('--- spinWheel function started ---');
+
     if (!canSpin()) {
+        console.log('Condition: User cannot spin yet (24-hour limit).');
         updateCountdown();
         return;
     }
+    console.log('Condition: User can spin (24-hour limit passed).');
 
     spinButton.disabled = true;
     resultDiv.classList.add('hidden');
@@ -170,52 +193,82 @@ async function spinWheel() {
         errorMessageP.textContent = 'Lỗi: Không tìm thấy ID người dùng. Vui lòng truy cập qua đường link Zalo OA chính thức.';
         errorDiv.classList.remove('hidden');
         spinButton.disabled = false;
-        return;
+        console.log('Condition: User ID is missing in URL.');
+        return; // Dừng lại nếu không có userId
     }
+    console.log('Condition: User ID is present in URL:', userId);
     
     // Kiểm tra xem userId này đã từng quay trúng quà tặng unique nào chưa
-    // (Cần gọi Google Apps Script để kiểm tra)
+    console.log('Calling checkAndRecordPrize for initial spin status check...');
     const userSpinStatus = await checkAndRecordPrize('check_spin_status', userId); // Action đặc biệt để kiểm tra
+    console.log('Result of initial spin status check:', userSpinStatus);
+
     if (userSpinStatus && userSpinStatus.hasSpunUniquePrize) {
         errorMessageP.textContent = 'Bạn đã quay và nhận quà tặng duy nhất rồi. Mỗi người chỉ được quay 1 lần với sản phẩm tặng.';
         errorDiv.classList.remove('hidden');
         spinButton.disabled = false;
-        return;
+        console.log('Condition: User has already received a unique prize.');
+        return; // Dừng lại nếu đã nhận quà tặng unique
     }
+    console.log('Condition: User has not received a unique prize yet.');
 
     // Chọn ngẫu nhiên một giải thưởng dựa trên trọng số
     const selectedPrize = getRandomPrize();
+    console.log('Selected Prize:', selectedPrize);
 
     // Nếu là quà tặng duy nhất, kiểm tra và ghi lại vào Google Sheet
     if (selectedPrize.unique) {
+        console.log('Selected prize is unique. Calling checkAndRecordPrize to record it...');
         const prizeStatus = await checkAndRecordPrize(selectedPrize.value, userId);
+        console.log('Result of recording unique prize:', prizeStatus);
         if (!prizeStatus.success) {
             errorMessageP.textContent = prizeStatus.message;
             errorDiv.classList.remove('hidden');
             spinButton.disabled = false;
-            return;
+            console.log('Error: Failed to record unique prize.');
+            return; // Dừng lại nếu ghi nhận quà tặng unique thất bại
         }
+        console.log('Unique prize recorded successfully.');
+    } else {
+        console.log('Selected prize is not unique. No special backend recording needed for non-unique prizes.');
     }
 
     // Animation (đơn giản)
-    let degrees = 0;
-    let rotations = 5; // Quay ít nhất 5 vòng
-    const targetDegree = 360 * rotations + Math.random() * 360; // Thêm một góc ngẫu nhiên để dừng
-
-    function animateSpin() {
-        if (degrees < targetDegree) {
-            degrees += 10; // Tăng dần độ quay
-            wheelCanvas.style.transform = `rotate(${degrees}deg)`;
-            requestAnimationFrame(animateSpin);
-        } else {
-            // Dừng vòng quay và hiển thị kết quả
-            localStorage.setItem('lastSpinTime', Date.now()); // Lưu thời điểm quay
-            displayResult(selectedPrize);
-            updateCountdown();
-            spinButton.disabled = false;
+    let currentDegrees = parseFloat(wheelCanvas.style.transform.replace('rotate(', '').replace('deg)', '') || 0);
+    const rotations = 5; // Quay ít nhất 5 vòng
+    // Tính toán góc dừng cuối cùng của vòng quay để giải thưởng chọn ngẫu nhiên nằm ở vị trí nhất định
+    let angleToStop = 0;
+    let accumulatedAngle = 0;
+    for (const prize of prizes) {
+        const sliceAngle = (prize.weight / totalWeight) * 360; // Degrees
+        if (prize === selectedPrize) {
+            angleToStop = accumulatedAngle + sliceAngle / 2; // Dừng ở giữa phần quà
+            break;
         }
+        accumulatedAngle += sliceAngle;
     }
-    animateSpin();
+    
+    // Đảm bảo dừng ở vị trí hợp lý sau nhiều vòng quay
+    // Quay đến một vị trí tương đối, sau đó thêm góc để nhắm trúng phần quà
+    const targetDegree = (360 * rotations) + (360 - angleToStop); // Adjust to land on top
+    
+    // Reset transform before animating to avoid cumulative rotations if spinning multiple times
+    wheelCanvas.style.transition = 'none';
+    wheelCanvas.style.transform = `rotate(${currentDegrees % 360}deg)`; // Normalize current rotation
+    void wheelCanvas.offsetWidth; // Force reflow
+    
+    wheelCanvas.style.transition = 'transform 3s ease-out';
+    wheelCanvas.style.transform = `rotate(${targetDegree}deg)`;
+
+
+    // Handle spin end after animation
+    setTimeout(() => {
+        console.log('Spin animation ended. Displaying result.');
+        localStorage.setItem('lastSpinTime', Date.now()); // Lưu thời điểm quay
+        displayResult(selectedPrize);
+        updateCountdown();
+        spinButton.disabled = false;
+    }, 3000); // 3 seconds for animation
 }
 
 function displayResult(prize) {
