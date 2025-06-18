@@ -119,7 +119,7 @@ function updateCountdown() {
 }
 
 // --- Phần xử lý quà tặng duy nhất (sử dụng Google Apps Script làm "backend") ---
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzK5Cg_zVAmSemFpe1nbBKB8Zoi-fAijFbsp_OAkmvB2HRYbncSaHpG2dh-t4SJXRXTwA/exec'; 
+const GOOGLE_APPS_SCRIPT_URL = 'https://hook.us2.make.com/kyk3fhqa8sdy6nxqx2q9dmsjeat432k2'; 
 
 // Hàm để kiểm tra xem quà tặng unique còn hay không và người dùng đã nhận chưa
 async function checkAndRecordPrize(prizeValue, userId) {
