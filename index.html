@@ -74,6 +74,8 @@
         }
 
         .pointer {
+            /* === UPDATE: Thêm dòng này để ẩn mũi tên === */
+            display: none;
             position: absolute; top: 50%; left: 50%;
             width: 10%; height: 12%;
             max-width: 50px; max-height: 60px;
@@ -212,7 +214,7 @@
             { name: "Voucher giảm giá 40%", type: "v40", probability: 0.08 },
             { name: "Voucher giảm giá 50%", type: "super_rare", probability: 0.012 },
             { name: "Tặng 1 ví da",         type: "super_rare", probability: 0.0004 },
-            { name: "Tặng 1 thắt lưng",    type: "super_rare", probability: 0.0004 }
+            { name: "Tặng 1 thắt lưng",     type: "super_rare", probability: 0.0004 }
         ];
 
         const colorMap = {
@@ -294,7 +296,7 @@
 
         function showResultModal(a,t){prizeResultEl.textContent=a;promoCodeEl.textContent=t;resultModal.classList.add("show")}
         function closeModal(){resultModal.classList.remove("show")}
-        function checkCooldown(){const a=localStorage.getItem(LAST_SPIN_KEY);if(!a)return spinBtn.disabled=!1,spinBtn.textContent="Quay",void viewLastCodeBtn.classList.add("hidden");const t=864e5,o=Date.now()-a;if(o<t){spinBtn.disabled=!0,viewLastCodeBtn.classList.remove("hidden"),countdownInterval&&clearInterval(countdownInterval),countdownInterval=setInterval(()=>{const a=t-(Date.now()-lastSpinTimestamp);a<=0?(clearInterval(countdownInterval),spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)):(spinBtn.style.fontSize="0.9rem",spinBtn.textContent=`Vui lòng\nquay lại sau\n${String(Math.floor(a/36e5)).padStart(2,"0")}:${String(Math.floor(a%36e5/6e4)).padStart(2,"0")}:${String(Math.floor(a%6e4/1e3)).padStart(2,"0")}`)},1e3)}else spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)}
+        function checkCooldown(){const a=localStorage.getItem(LAST_SPIN_KEY);if(!a)return spinBtn.disabled=!1,spinBtn.textContent="Quay",void viewLastCodeBtn.classList.add("hidden");const t=864e5,o=Date.now()-a;const lastSpinTimestamp = parseInt(a);if(o<t){spinBtn.disabled=!0,viewLastCodeBtn.classList.remove("hidden"),countdownInterval&&clearInterval(countdownInterval),countdownInterval=setInterval(()=>{const a=t-(Date.now()-lastSpinTimestamp);a<=0?(clearInterval(countdownInterval),spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)):(spinBtn.style.fontSize="0.9rem",spinBtn.textContent=`Vui lòng\nquay lại sau\n${String(Math.floor(a/36e5)).padStart(2,"0")}:${String(Math.floor(a%36e5/6e4)).padStart(2,"0")}:${String(Math.floor(a%6e4/1e3)).padStart(2,"0")}`)},1e3)}else spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)}
         
         viewLastCodeBtn.addEventListener('click', () => {
             const lastWinData = localStorage.getItem(LAST_WIN_KEY);
