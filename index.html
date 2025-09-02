@@ -19,10 +19,9 @@
         }
 
         body {
-            /* SỬ DỤNG FONT POPPINS MỚI */
             font-family: 'Poppins', sans-serif;
             display: flex;
-            flex-direction: column; 
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -37,20 +36,20 @@
 
         .title-container { margin-bottom: 20px; }
         .title-container h1 {
-            margin: 0; font-size: 3em; font-weight: 700; /* Bold của Poppins */
+            margin: 0; font-size: 3em; font-weight: 700;
             text-transform: uppercase; color: #fff;
             text-shadow: 0 0 8px var(--shadow-color), 0 0 15px var(--accent-blue);
         }
         .title-container p {
             margin: 5px 0 15px 0; font-size: 1.2em;
             color: var(--super-rare-color); letter-spacing: 3px;
-            text-transform: uppercase; font-weight: 500; /* Medium của Poppins */
+            text-transform: uppercase; font-weight: 500;
         }
         #view-last-code-btn {
             background: transparent; border: 2px solid var(--accent-blue);
             color: var(--accent-blue); padding: 8px 16px; border-radius: 5px;
             cursor: pointer; font-size: 14px; font-weight: 700;
-            font-family: 'Poppins', sans-serif; /* Đảm bảo nút cũng dùng font mới */
+            font-family: 'Poppins', sans-serif;
             transition: all 0.3s ease;
         }
         #view-last-code-btn:hover { background: var(--accent-blue); color: var(--primary-bg); }
@@ -58,8 +57,7 @@
 
         .wheel-container {
             position: relative;
-            /* TĂNG KÍCH THƯỚC VÒNG QUAY LÊN 98% */
-            width: 98vw; 
+            width: 98vw;
             max-width: 500px;
             aspect-ratio: 1 / 1;
             display: flex; justify-content: center;
@@ -74,7 +72,6 @@
         }
 
         .pointer {
-            /* === UPDATE: Thêm dòng này để ẩn mũi tên === */
             display: none;
             position: absolute; top: 50%; left: 50%;
             width: 10%; height: 12%;
@@ -131,6 +128,15 @@
         .modal-overlay.show .modal-content { transform: scale(1); }
         .modal-content h2 { margin-top: 0; color: var(--super-rare-color); font-size: 28px; }
         #prize-result { font-weight: 500; font-size: 20px; color: #fff; }
+        
+        /* === UPDATE: Thêm CSS cho thông báo điều kiện === */
+        #prize-condition {
+            font-size: 15px;
+            color: var(--super-rare-color);
+            font-style: italic;
+            margin: 10px 0;
+        }
+
         #promo-code {
             display: inline-block; background-color: var(--primary-bg);
             padding: 10px 20px; border-radius: 5px; font-size: 22px;
@@ -155,6 +161,7 @@
             .modal-content { padding: 20px; }
             .modal-content h2 { font-size: 22px; }
             #prize-result { font-size: 16px; }
+            #prize-condition { font-size: 14px; }
             #promo-code { font-size: 18px; }
             .modal-close-btn { font-size: 14px; }
         }
@@ -179,6 +186,7 @@
             <h2>CHÚC MỪNG BẠN!</h2>
             <p>Bạn đã trúng:</p>
             <p id="prize-result"></p>
+            <p id="prize-condition"></p>
             <p>Vui lòng đưa mã dưới đây cho nhân viên để được nhận khuyến mãi:</p>
             <span id="promo-code"></span>
             <button id="modal-close-btn" class="modal-close-btn">Đóng</button>
@@ -189,12 +197,13 @@
         const canvas = document.getElementById('wheel-canvas');
         const spinBtn = document.getElementById('spin-btn');
         const wheelContainer = document.querySelector('.wheel-container');
-        // ... Các hằng số DOM element khác ...
         const resultModal = document.getElementById('result-modal');
         const prizeResultEl = document.getElementById('prize-result');
         const promoCodeEl = document.getElementById('promo-code');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const viewLastCodeBtn = document.getElementById('view-last-code-btn');
+        // === UPDATE: Thêm element mới ===
+        const prizeConditionEl = document.getElementById('prize-condition');
         const ctx = canvas.getContext('2d');
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -207,18 +216,21 @@
         let countdownInterval;
         let isSpinning = false;
 
+        // === UPDATE: Thay đổi tên giải thưởng từ 10% -> 70% ===
         const prizes = [
             { name: "Voucher giảm giá 20%", type: "v20", probability: 0.01 },
             { name: "Voucher giảm giá 30%", type: "v30", probability: 0.60 },
-            { name: "Voucher giảm giá 10%", type: "v10", probability: 0.0272 },
+            { name: "Voucher giảm giá 70%", type: "v70", probability: 0.0272 }, // <-- THAY ĐỔI Ở ĐÂY
             { name: "Voucher giảm giá 40%", type: "v40", probability: 0.35 },
             { name: "Voucher giảm giá 50%", type: "super_rare", probability: 0.012 },
             { name: "Tặng 1 ví da",         type: "super_rare", probability: 0.0004 },
-            { name: "Tặng 1 thắt lưng",     type: "super_rare", probability: 0.0004 }
+            { name: "Tặng 1 thắt lưng",      type: "super_rare", probability: 0.0004 }
         ];
 
+        // === UPDATE: Cập nhật colorMap cho v70 ===
         const colorMap = {
-            'v10': '#006187', 'v20': '#0077b3', 'v30': '#0088cc', 'v40': '#0099e6',
+            'v20': '#0077b3', 'v30': '#0088cc', 'v40': '#0099e6',
+            'v70': '#006187', // <-- THAY ĐỔI Ở ĐÂY (sử dụng màu của v10 cũ)
             'super_rare': '#ffc107'
         };
         prizes.forEach(prize => prize.color = colorMap[prize.type]);
@@ -242,7 +254,6 @@
                 ctx.textAlign = 'right'; ctx.fillStyle = '#fff';
                 
                 const fontSize = Math.floor(radius * 0.075);
-                // CẬP NHẬT FONT CHỮ TRÊN VÒNG QUAY
                 ctx.font = `700 ${fontSize}px Poppins`;
                 const textOffset = radius * 0.1;
 
@@ -284,9 +295,14 @@
                     promoCode:newPromoCode,spinTimestamp:new Date().toISOString()
                 };
                 sendDataToWebhook(payload);
-                showResultModal(winningPrize.name, newPromoCode);
+                showResultModal(winningPrize, newPromoCode); // <-- UPDATE: Truyền cả object prize
                 localStorage.setItem(LAST_SPIN_KEY, Date.now());
-                localStorage.setItem(LAST_WIN_KEY, JSON.stringify({ prizeName: winningPrize.name, promoCode: newPromoCode }));
+                // === UPDATE: Lưu thêm prize.type vào Local Storage ===
+                localStorage.setItem(LAST_WIN_KEY, JSON.stringify({ 
+                    prizeName: winningPrize.name, 
+                    promoCode: newPromoCode,
+                    prizeType: winningPrize.type // <-- Dòng mới
+                }));
                 checkCooldown();
                 isSpinning = false;
                 canvas.style.transition = 'none';
@@ -294,15 +310,31 @@
             }, 6100); 
         }
 
-        function showResultModal(a,t){prizeResultEl.textContent=a;promoCodeEl.textContent=t;resultModal.classList.add("show")}
+        // === UPDATE: Cập nhật hàm để xử lý hiển thị có điều kiện ===
+        function showResultModal(prize, promoCode) {
+            prizeResultEl.textContent = prize.name;
+            promoCodeEl.textContent = promoCode;
+
+            // Kiểm tra nếu là giải v70 thì hiển thị thông báo đặc biệt
+            if (prize.type === 'v70') {
+                prizeConditionEl.textContent = 'Áp dụng với một số sản phẩm nhất định. Liên hệ Zalo để mua hàng.';
+            } else {
+                prizeConditionEl.textContent = ''; // Xóa nội dung nếu là giải khác
+            }
+
+            resultModal.classList.add("show");
+        }
         function closeModal(){resultModal.classList.remove("show")}
         function checkCooldown(){const a=localStorage.getItem(LAST_SPIN_KEY);if(!a)return spinBtn.disabled=!1,spinBtn.textContent="Quay",void viewLastCodeBtn.classList.add("hidden");const t=864e5,o=Date.now()-a;const lastSpinTimestamp = parseInt(a);if(o<t){spinBtn.disabled=!0,viewLastCodeBtn.classList.remove("hidden"),countdownInterval&&clearInterval(countdownInterval),countdownInterval=setInterval(()=>{const a=t-(Date.now()-lastSpinTimestamp);a<=0?(clearInterval(countdownInterval),spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)):(spinBtn.style.fontSize="0.9rem",spinBtn.textContent=`Vui lòng\nquay lại sau\n${String(Math.floor(a/36e5)).padStart(2,"0")}:${String(Math.floor(a%36e5/6e4)).padStart(2,"0")}:${String(Math.floor(a%6e4/1e3)).padStart(2,"0")}`)},1e3)}else spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)}
         
+        // === UPDATE: Cập nhật event listener để đọc prizeType từ Local Storage ===
         viewLastCodeBtn.addEventListener('click', () => {
             const lastWinData = localStorage.getItem(LAST_WIN_KEY);
             if (lastWinData) {
-                const { prizeName, promoCode } = JSON.parse(lastWinData);
-                showResultModal(prizeName, promoCode);
+                const { prizeName, promoCode, prizeType } = JSON.parse(lastWinData);
+                // Tạo lại prize object để truyền vào hàm showResultModal
+                const prize = { name: prizeName, type: prizeType || '' }; // || '' để tránh lỗi nếu dữ liệu cũ không có type
+                showResultModal(prize, promoCode);
             }
         });
 
