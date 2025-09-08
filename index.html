@@ -6,344 +6,1040 @@
     <title>Vòng Quay May Mắn - SeaZen Fashion</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary-bg: #0d1a2d;
-            --secondary-bg: #1f2e45;
-            --accent-blue: #00aaff;
-            --text-color: #ffffff;
-            --super-rare-color: #ffc107;
-            --shadow-color: rgba(0, 170, 255, 0.5);
+            --primary-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --secondary-bg: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.12);
+            --accent-gold: #D4AF37;
+            --accent-silver: #C0C0C0;
+            --accent-bronze: #CD7F32;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.85);
+            --shadow-1: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-2: 0 16px 64px rgba(0, 0, 0, 0.4);
+            --border-radius: 24px;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-bg);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 15px;
-            box-sizing: border-box;
-            background-color: var(--primary-bg);
-            color: var(--text-color);
+            padding: 16px;
+            position: relative;
             overflow-x: hidden;
-            text-align: center;
+            background-attachment: fixed;
         }
 
-        .title-container { margin-bottom: 20px; }
-        .title-container h1 {
-            margin: 0; font-size: 3em; font-weight: 700;
-            text-transform: uppercase; color: #fff;
-            text-shadow: 0 0 8px var(--shadow-color), 0 0 15px var(--accent-blue);
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
-        .title-container p {
-            margin: 5px 0 15px 0; font-size: 1.2em;
-            color: var(--super-rare-color); letter-spacing: 3px;
-            text-transform: uppercase; font-weight: 500;
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(212, 175, 55, 0.6);
+            border-radius: 50%;
+            animation: float 25s infinite linear;
         }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.8), 0 0 60px rgba(212, 175, 55, 0.6); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            padding: 20px 16px;
+            border-radius: var(--border-radius);
+            border: var(--glass-border);
+            box-shadow: var(--shadow-1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .header h1 {
+            font-size:  1.7rem;
+            font-weight: 800;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #E0E0E0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            text-shadow: 0 0 8px rgba(224, 224, 224, 0.6);
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         #view-last-code-btn {
-            background: transparent; border: 2px solid var(--accent-blue);
-            color: var(--accent-blue); padding: 8px 16px; border-radius: 5px;
-            cursor: pointer; font-size: 14px; font-weight: 700;
-            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, var(--accent-bronze), var(--accent-gold));
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-1);
+            min-height: 36px;
         }
-        #view-last-code-btn:hover { background: var(--accent-blue); color: var(--primary-bg); }
-        .hidden { display: none !important; }
+
+        #view-last-code-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-2);
+        }
+
+        /* Wheel Container */
+        main {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .wheel-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
 
         .wheel-container {
             position: relative;
-            width: 98vw;
-            max-width: 500px;
-            aspect-ratio: 1 / 1;
-            display: flex; justify-content: center;
-            align-items: center; flex-direction: column;
-            flex-shrink: 0;
-        }
-        #wheel-canvas {
-            width: 100%; height: 100%;
-            transition: transform 6s cubic-bezier(0.1, 0.7, 0.3, 1);
+            width: min(85vw, 350px);
+            height: min(85vw, 350px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
             border-radius: 50%;
-            box-shadow: 0 0 20px var(--shadow-color), inset 0 0 15px rgba(0,0,0,0.5);
+            border: var(--glass-border);
+            box-shadow: var(--shadow-2);
+            animation: pulse 6s ease-in-out infinite;
+        }
+
+        #wheel-canvas {
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            transition: transform 4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
         }
 
         .pointer {
-            display: none;
-            position: absolute; top: 50%; left: 50%;
-            width: 10%; height: 12%;
-            max-width: 50px; max-height: 60px;
-            transform: translate(-50%, -100%);
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 16px solid transparent;
+            border-right: 16px solid transparent;
+            border-bottom: 32px solid var(--accent-gold);
             z-index: 10;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+            animation: glow 2s ease-in-out infinite;
         }
-        .pointer::before {
-            content: ''; position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, var(--accent-blue), var(--super-rare-color));
-            transform: scale(0.9);
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            filter: drop-shadow(0 0 5px var(--super-rare-color));
-        }
+
         #spin-btn {
-            position: absolute; top: 50%; left: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
-            width: 20%; height: 20%;
-            max-width: 100px; max-height: 100px;
-            border-radius: 50%; border: 5px solid var(--text-color);
-            background-color: var(--secondary-bg); color: var(--text-color);
-            font-size: 1.5rem; font-weight: 700;
-            font-family: 'Poppins', sans-serif;
-            cursor: pointer; z-index: 20;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
-            text-transform: uppercase; white-space: pre-wrap; line-height: 1.2;
-        }
-        #spin-btn:hover:not(:disabled) {
-            background-color: var(--accent-blue); color: var(--primary-bg);
-            border-color: var(--primary-bg);
-        }
-        #spin-btn:disabled {
-            cursor: not-allowed; background-color: #2a3b52;
-            color: #8a9bb0; border-color: #556a86;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-gold);
+            background: linear-gradient(45deg, var(--accent-gold), #F4E4BC);
+            color: #1a1a2e;
             font-size: 0.9rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            z-index: 20;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); display: none;
-            justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; transition: opacity 0.3s ease;
+
+        #spin-btn:hover:not(:disabled) {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: var(--shadow-2);
         }
-        .modal-overlay.show { display: flex; opacity: 1; }
-        .modal-content {
-            background-color: var(--secondary-bg); padding: 30px 40px;
-            border-radius: 10px; border: 2px solid var(--accent-blue);
-            box-shadow: 0 0 30px var(--shadow-color);
-            text-align: center; width: 90%; max-width: 400px;
-            transform: scale(0.8); transition: transform 0.3s ease;
+
+        #spin-btn:disabled {
+            cursor: not-allowed;
+            background: linear-gradient(45deg, #666, #888);
+            color: #ccc;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border-color: #666;
         }
-        .modal-overlay.show .modal-content { transform: scale(1); }
-        .modal-content h2 { margin-top: 0; color: var(--super-rare-color); font-size: 28px; }
-        #prize-result { font-weight: 500; font-size: 20px; color: #fff; }
+
+        .prize-list-section {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+            backdrop-filter: blur(20px);
+            background: var(--card-bg);
+            padding: 20px 16px;
+            border-radius: var(--border-radius);
+            border: var(--glass-border);
+            box-shadow: var(--shadow-1);
+        }
+
+        /* --- CẬP NHẬT: CSS CHO DANH SÁCH GIẢI THƯỞNG CÓ THỂ THU GỌN --- */
+        .prize-list-section h2 {
+            font-size: 1rem; /* Giảm kích thước font */
+            font-weight: 500;
+            color: var(--accent-gold);
+            text-align: center;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer; /* Thêm con trỏ để cho biết có thể nhấp */
+            user-select: none; /* Ngăn chọn văn bản khi nhấp */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prize-list-section h2 .toggle-icon {
+            transition: transform 0.4s ease;
+            display: inline-block; /* Để transform hoạt động */
+            line-height: 0; /* Căn chỉnh icon tốt hơn */
+        }
         
-        /* === UPDATE: Thêm CSS cho thông báo điều kiện === */
+        .prize-list-section h2.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .prize-table-wrapper {
+            max-height: 0; /* Ẩn theo mặc định */
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .prize-table-wrapper.expanded {
+            max-height: 350px; /* Chiều cao đủ để hiển thị toàn bộ bảng */
+        }
+        /* --- KẾT THÚC CẬP NHẬT --- */
+
+        .prize-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .prize-table td {
+            padding: 10px 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .prize-table tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 16px;
+            pointer-events: none;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+            backdrop-filter: blur(30px);
+            padding: 24px 20px;
+            border-radius: var(--border-radius);
+            border: var(--glass-border);
+            box-shadow: var(--shadow-2);
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+            margin-bottom: 16px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content .prize-announcement,
+        .modal-content .promo-code-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        #prize-result {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding: 16px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 12px;
+            border: 2px solid var(--accent-gold);
+        }
+
         #prize-condition {
-            font-size: 15px;
-            color: var(--super-rare-color);
+            font-size: 0.85rem;
+            color: var(--accent-silver);
             font-style: italic;
-            margin: 10px 0;
+            margin: 12px 0;
+            line-height: 1.4;
         }
 
         #promo-code {
-            display: inline-block; background-color: var(--primary-bg);
-            padding: 10px 20px; border-radius: 5px; font-size: 22px;
-            font-weight: 700; letter-spacing: 2px;
-            color: var(--super-rare-color); margin-top: 10px;
-            border: 1px dashed var(--accent-blue);
+            display: inline-block;
+            background: linear-gradient(45deg, var(--accent-gold), #F4E4BC);
+            color: #1a1a2e;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-top: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: var(--shadow-1);
         }
-        .modal-close-btn {
-            margin-top: 25px; padding: 12px 30px; border: none; border-radius: 5px;
-            background-color: var(--accent-blue); color: var(--primary-bg);
-            font-size: 16px; font-weight: 700; cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            transition: background-color 0.3s; text-transform: uppercase;
-        }
-        .modal-close-btn:hover { background-color: #fff; }
 
-        @media (max-width: 600px) {
-            .title-container h1 { font-size: 2.2em; }
-            .title-container p { font-size: 1em; }
-            #spin-btn { font-size: 1rem; border-width: 3px; }
-            #spin-btn:disabled { font-size: 0.7rem; }
-            .modal-content { padding: 20px; }
-            .modal-content h2 { font-size: 22px; }
-            #prize-result { font-size: 16px; }
-            #prize-condition { font-size: 14px; }
-            #promo-code { font-size: 18px; }
-            .modal-close-btn { font-size: 14px; }
+        .modal-close-btn {
+            margin-top: 20px;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(45deg, var(--accent-bronze), var(--accent-gold));
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-1);
+        }
+
+        .modal-close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-2);
+        }
+
+        /* Password Modal */
+        .password-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+            backdrop-filter: blur(30px);
+            padding: 24px 20px;
+            border-radius: var(--border-radius);
+            border: var(--glass-border);
+            box-shadow: var(--shadow-2);
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .password-content h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 16px;
+        }
+
+        .password-content p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        #password-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        #password-input:focus {
+            outline: none;
+            border-color: var(--accent-silver);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        #password-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .password-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        #password-submit, #password-cancel {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #password-submit {
+            background: linear-gradient(45deg, var(--accent-bronze), var(--accent-gold));
+            color: white;
+        }
+
+        #password-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Floating Action Button (FAB) for Extra Spin */
+        .fab-add-spin {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, var(--accent-bronze), var(--accent-gold));
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--shadow-2);
+            cursor: pointer;
+            z-index: 999;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: white;
+        }
+
+        .fab-add-spin:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+        }
+
+        .fab-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background-color: #e74c3c;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 2px solid var(--primary-bg);
+        }
+        
+        .hidden { display: none !important; }
+
+        /* Responsive adjustments */
+        @media (max-width: 360px) {
+            .header { padding: 16px 12px; }
+            .header h1 { font-size: 1.7rem; }
+            .wheel-container {
+                width: min(80vw, 300px);
+                height: min(80vw, 300px);
+            }
+            #spin-btn { width: 70px; height: 70px; font-size: 0.8rem; }
+            .fab-add-spin { width: 50px; height: 50px; bottom: 16px; right: 16px; }
+        }
+
+        @media (max-height: 600px) and (orientation: landscape) {
+            body { padding: 8px; }
+            .header { margin-bottom: 16px; padding: 12px; }
+            .header h1 { font-size: 1.5rem; }
+            .wheel-container {
+                width: min(50vh, 280px);
+                height: min(50vh, 280px);
+            }
         }
     </style>
 </head>
 <body>
+    <div class="particles"></div>
 
-    <div class="title-container">
-        <h1>Vòng Quay May Mắn</h1>
-        <p>SeaZen Fashion</p>
-        <button id="view-last-code-btn" class="hidden">Xem lại mã khuyến mãi</button>
+    <div class="header">
+        <h1>VÒNG QUAY MAY MẮN</h1>
+        <div class="subtitle">SeaZen Fashion</div>
+        <div class="header-buttons">
+            <button id="view-last-code-btn" class="hidden">Xem lại mã</button>
+        </div>
     </div>
     
-    <div class="wheel-container">
-        <div class="pointer"></div>
-        <canvas id="wheel-canvas"></canvas>
-        <button id="spin-btn">Quay</button>
-    </div>
+    <main>
+        <div class="wheel-section">
+            <div class="wheel-container">
+                <canvas id="wheel-canvas"></canvas>
+                <div class="pointer"></div>
+                <button id="spin-btn">QUAY</button>
+            </div>
+        </div>
 
-    <div id="result-modal" class="modal-overlay">
+        <div class="prize-list-section">
+            <h2 id="prize-list-toggle">
+                Danh sách giải thưởng
+                <span class="toggle-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-9"/></svg>
+                </span>
+            </h2>
+            <div id="prize-table-wrapper" class="prize-table-wrapper">
+                <table class="prize-table">
+                    <tbody>
+                        <tr><td>Tặng 1 Thắt lưng da PU hoặc Ví da</td></tr>
+                        <tr><td>Voucher giảm giá 30% - 70%</td></tr>
+                        <tr><td>Combo ưu đãi mua 1 Túi xách bất kỳ + 1 Thắt lưng bất kỳ với giá 2 triệu</td></tr>
+                        <tr><td>Combo ưu đãi mua 1 Thắt lưng bất kỳ + 1 Ví da bất kỳ với giá 500k</td></tr>
+                        <tr><td>Combo ưu đãi mua 1 Giày bất kỳ + 1 Thắt lưng bất kỳ với giá 2 triệu</td></tr>
+                        <tr><td>Combo ưu đãi mua 1 Giày + 1 Thắt lưng + 1 Túi da + 1 Ví da bất kỳ với giá 3,5 triệu</td></tr>
+                        <tr><td>Combo ưu đãi mua 2 Giày bất kỳ với giá 3 triệu</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="result-modal" class="modal-overlay" role="dialog" aria-modal="true">
         <div class="modal-content">
-            <h2>CHÚC MỪNG BẠN!</h2>
-            <p>Bạn đã trúng:</p>
-            <p id="prize-result"></p>
-            <p id="prize-condition"></p>
-            <p>Vui lòng đưa mã dưới đây cho nhân viên để được nhận khuyến mãi:</p>
-            <span id="promo-code"></span>
+            <h2>CHÚC MỪNG! 🎉</h2>
+            <div class="prize-announcement">Bạn đã trúng:</div>
+            <div id="prize-result"></div>
+            <div id="prize-condition"></div>
+            <div class="promo-code-label">Vui lòng đưa mã dưới đây cho nhân viên để được nhận khuyến mãi:</div>
+            <div id="promo-code"></div>
             <button id="modal-close-btn" class="modal-close-btn">Đóng</button>
         </div>
     </div>
 
+    <div id="password-modal" class="modal-overlay" role="dialog" aria-modal="true">
+        <div class="password-content">
+            <h3>🔐 Mật khẩu đặc biệt</h3>
+            <p>Nhập mật khẩu để nhận thêm 1 lượt quay miễn phí!</p>
+            <input type="password" id="password-input" placeholder="Nhập mật khẩu..." maxlength="20">
+            <div class="password-buttons">
+                <button id="password-submit">Xác nhận</button>
+                <button id="password-cancel">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="fab-add-spin-btn" class="fab-add-spin" aria-label="Thêm lượt quay">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24" 24" fill="currentColor" width="28" height="28">
+            <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6z"></path>
+        </svg>
+        <span id="extra-spins-badge" class="fab-badge hidden"></span>
+    </button>
+
+
     <script>
-        const canvas = document.getElementById('wheel-canvas');
-        const spinBtn = document.getElementById('spin-btn');
-        const wheelContainer = document.querySelector('.wheel-container');
-        const resultModal = document.getElementById('result-modal');
-        const prizeResultEl = document.getElementById('prize-result');
-        const promoCodeEl = document.getElementById('promo-code');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        const viewLastCodeBtn = document.getElementById('view-last-code-btn');
-        // === UPDATE: Thêm element mới ===
-        const prizeConditionEl = document.getElementById('prize-condition');
-        const ctx = canvas.getContext('2d');
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('user_id');
-        const phone = urlParams.get('phone');
-
-        const COOLDOWN_HOURS = 24;
-        const LAST_SPIN_KEY = 'lastSpinTimestamp';
-        const LAST_WIN_KEY = 'lastWinData';
-        let countdownInterval;
-        let isSpinning = false;
-
-        // === UPDATE: Thay đổi tên giải thưởng từ 10% -> 70% ===
-        const prizes = [
-            { name: "Voucher giảm giá 20%", type: "v20", probability: 0.01 },
-            { name: "Voucher giảm giá 30%", type: "v30", probability: 0.60 },
-            { name: "Voucher giảm giá 70%", type: "v70", probability: 0.0272 }, // <-- THAY ĐỔI Ở ĐÂY
-            { name: "Voucher giảm giá 40%", type: "v40", probability: 0.35 },
-            { name: "Voucher giảm giá 50%", type: "super_rare", probability: 0.012 },
-            { name: "Tặng 1 ví da",         type: "super_rare", probability: 0.0004 },
-            { name: "Tặng 1 thắt lưng",      type: "super_rare", probability: 0.0004 }
-        ];
-
-        // === UPDATE: Cập nhật colorMap cho v70 ===
-        const colorMap = {
-            'v20': '#0077b3', 'v30': '#0088cc', 'v40': '#0099e6',
-            'v70': '#006187', // <-- THAY ĐỔI Ở ĐÂY (sử dụng màu của v10 cũ)
-            'super_rare': '#ffc107'
-        };
-        prizes.forEach(prize => prize.color = colorMap[prize.type]);
-
-        const numPrizes = prizes.length;
-        const anglePerPrize = (2 * Math.PI) / numPrizes;
-        let radius;
-
-        function drawWheel() {
-            const size = wheelContainer.clientWidth;
-            canvas.width = size; canvas.height = size;
-            radius = size / 2;
-
-            ctx.clearRect(0,0,size,size); ctx.save(); ctx.translate(radius,radius);
-            prizes.forEach((prize, i) => {
-                const sa = i * anglePerPrize; ctx.beginPath(); ctx.moveTo(0,0);
-                ctx.arc(0,0,radius - 10, sa, sa + anglePerPrize); ctx.closePath();
-                ctx.fillStyle = i % 2 === 0 ? prize.color : lightenColor(prize.color, 15); ctx.fill();
-                ctx.strokeStyle='#fff'; ctx.lineWidth = 2; ctx.stroke(); ctx.save();
-                ctx.rotate(sa + anglePerPrize / 2);
-                ctx.textAlign = 'right'; ctx.fillStyle = '#fff';
-                
-                const fontSize = Math.floor(radius * 0.075);
-                ctx.font = `700 ${fontSize}px Poppins`;
-                const textOffset = radius * 0.1;
-
-                const nameParts = prize.name.split(' ');
-                if (nameParts.length >= 3) {
-                    const line1 = nameParts.slice(0, nameParts.length - 1).join(' ');
-                    const line2 = nameParts[nameParts.length - 1];
-                    ctx.fillText(line1, radius - textOffset, -fontSize * 0.4);
-                    ctx.fillText(line2, radius - textOffset, fontSize * 0.8);
-                } else {
-                    ctx.fillText(prize.name, radius - textOffset, fontSize * 0.3);
+        const app = {
+            // --- CONFIGURATION ---
+            config: {
+                COOLDOWN_HOURS: 24,
+                SECRET_PASSWORD: '12123131',
+                WEBHOOK_URL: "https://hook.us2.make.com/kyk3fhqa8sdy6nxqx2q9dmsjeat432k2",
+                localStorageKeys: {
+                    LAST_SPIN: 'lastSpinTimestamp',
+                    LAST_WIN: 'lastWinData',
+                    EXTRA_SPINS: 'extraSpins'
+                },
+                prizes: [
+                    { name: "Thắt lưng PU / Ví da", fullName: "Tặng 1 Thắt lưng PU / Ví da", type: "gift", probability: 0.01 },
+                    { name: "Voucher 70%", fullName: "Voucher giảm giá 70%", type: "v70", probability: 0.01 },
+                    { name: "Voucher 60%", fullName: "Voucher giảm giá 60%", type: "v60", probability: 0.01 },
+                    { name: "Voucher 50%", fullName: "Voucher giảm giá 50%", type: "v50", probability: 0.03 },
+                    { name: "Voucher 40%", fullName: "Voucher giảm giá 40%", type: "v40", probability: 0.13 },
+                    { name: "Voucher 30%", fullName: "Voucher giảm giá 30%", type: "v30", probability: 0.12 },
+                    { name: "Combo túi xách, thắt lưng 2 triệu", fullName: "Ưu đãi mua 1 Túi xách bất kỳ + 1 Thắt lưng bất kỳ với giá 2 triệu", type: "combo_premium", probability: 0.19 },
+                    { name: "Combo thắt lưng, ví da 500k", fullName: "Ưu đãi mua 1 Thắt lưng bất kỳ + 1 Ví da bất kỳ với giá 500k", type: "combo_basic", probability: 0.12 },
+                    { name: "Combo giày, thắt lưng 2 triệu", fullName: "Ưu đãi mua 1 Giày bất kỳ + 1 Thắt lưng bất kỳ với giá 2 triệu", type: "combo_shoe", probability: 0.13 },
+                    { name: "Combo 4 món 3,5 triệu", fullName: "Ưu đãi mua 1 Giày + 1 Thắt lưng + 1 Túi da + 1 Ví da bất kỳ với giá 3,5 triệu", type: "combo_luxury", probability: 0.05 },
+                    { name: "Combo 2 giày 3 triệu", fullName: "Ưu đãi mua 2 Giày bất kỳ với giá 3 triệu", type: "combo_shoes", probability: 0.20 }
+                ],
+                colorMap: {
+                    'gift': '#8B4513', 'v70': '#2F4F4F', 'v60': '#483D8B', 'v50': '#556B2F',
+                    'v40': '#8B7355', 'v30': '#8B4789', 'combo_premium': '#8B0000',
+                    'combo_basic': '#191970', 'combo_shoe': '#006400', 'combo_luxury': '#B8860B', 'combo_shoes': '#4B0082'
                 }
-                ctx.restore();
-            });
-            ctx.restore();
-        }
-        
-        window.addEventListener('resize', drawWheel);
+            },
 
-        function lightenColor(h,p){h=h.replace(/^#/,'');const r=parseInt(h.substring(0,2),16),g=parseInt(h.substring(2,4),16),b=parseInt(h.substring(4,6),16);const nR=Math.min(255,r+(255-r)*(p/100)),nG=Math.min(255,g+(255-g)*(p/100)),nB=Math.min(255,b+(255-b)*(p/100));return `#${Math.round(nR).toString(16).padStart(2,'0')}${Math.round(nG).toString(16).padStart(2,'0')}${Math.round(nB).toString(16).padStart(2,'0')}`}
-        function getWinner(){ const r=Math.random();let c=0;for(let i=0;i<prizes.length;i++){c+=prizes[i].probability;if(r<c)return i;}}
-        function generatePromoCode(l=8){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';let r='';for(let i=0;i<l;i++)r+=c.charAt(Math.floor(Math.random()*c.length));return r.slice(0,4)+'-'+r.slice(4)}
-        async function sendDataToWebhook(a){const t="https://hook.us2.make.com/kyk3fhqa8sdy6nxqx2q9dmsjeat432k2";try{const o=await fetch(t,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(a)});o.ok?console.log("Webhook sent successfully!"):console.error("Webhook failed:",o.statusText)}catch(o){console.error("Error sending webhook:",o)}}
-        
-        function spin() {
-            if (isSpinning) return;
-            isSpinning = true;
-            spinBtn.disabled = true;
+            // --- APPLICATION STATE ---
+            state: {
+                isSpinning: false,
+                countdownInterval: null,
+                currentRotation: 0,
+                radius: 0
+            },
+
+            // --- DOM ELEMENTS ---
+            elements: {
+                canvas: document.getElementById('wheel-canvas'),
+                spinBtn: document.getElementById('spin-btn'),
+                wheelContainer: document.querySelector('.wheel-container'),
+                resultModal: document.getElementById('result-modal'),
+                prizeResultEl: document.getElementById('prize-result'),
+                promoCodeEl: document.getElementById('promo-code'),
+                prizeConditionEl: document.getElementById('prize-condition'),
+                modalCloseBtn: document.getElementById('modal-close-btn'),
+                viewLastCodeBtn: document.getElementById('view-last-code-btn'),
+                fabAddSpinBtn: document.getElementById('fab-add-spin-btn'),
+                extraSpinsBadge: document.getElementById('extra-spins-badge'),
+                passwordModal: document.getElementById('password-modal'),
+                passwordInput: document.getElementById('password-input'),
+                passwordSubmit: document.getElementById('password-submit'),
+                passwordCancel: document.getElementById('password-cancel'),
+                particlesContainer: document.querySelector('.particles'),
+                // --- CẬP NHẬT: Thêm các element cho danh sách giải thưởng ---
+                prizeListToggle: document.getElementById('prize-list-toggle'),
+                prizeTableWrapper: document.getElementById('prize-table-wrapper'),
+            },
+
+            // --- INITIALIZATION ---
+            init() {
+                this.ctx = this.elements.canvas.getContext('2d');
+                this.assignPrizeColors();
+                this.createParticles();
+                this.drawWheel();
+                this.updateUIState();
+                this.attachEventListeners();
+            },
+
+            // --- EVENT LISTENERS ---
+            attachEventListeners() {
+                window.addEventListener('resize', () => this.drawWheel());
+                this.elements.spinBtn.addEventListener('click', () => this.spin());
+                this.elements.viewLastCodeBtn.addEventListener('click', () => this.showLastWin());
+                this.elements.fabAddSpinBtn.addEventListener('click', () => this.toggleModal(this.elements.passwordModal, true));
+                this.elements.modalCloseBtn.addEventListener('click', () => this.toggleModal(this.elements.resultModal, false));
+                this.elements.passwordSubmit.addEventListener('click', () => this.checkPassword());
+                this.elements.passwordCancel.addEventListener('click', () => this.toggleModal(this.elements.passwordModal, false));
+
+                // --- CẬP NHẬT: Thêm event listener cho việc thu/mở danh sách giải thưởng ---
+                this.elements.prizeListToggle.addEventListener('click', () => this.togglePrizeList());
+
+                this.elements.passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.checkPassword();
+                });
+
+                this.elements.resultModal.addEventListener('click', (e) => {
+                    if (e.target === this.elements.resultModal) this.toggleModal(this.elements.resultModal, false);
+                });
+                this.elements.passwordModal.addEventListener('click', (e) => {
+                    if (e.target === this.elements.passwordModal) this.toggleModal(this.elements.passwordModal, false);
+                });
+            },
             
-            const winnerIndex = getWinner();
-            const totalRotationDeg = (parseFloat(canvas.style.transform.replace(/[^0-9.-]/g,''))||0)+3600+(360-(winnerIndex*anglePerPrize*180/Math.PI)-((Math.random()-.5)*anglePerPrize*.8*180/Math.PI));
-            canvas.style.transform = `rotate(${totalRotationDeg}deg)`;
+            // --- CẬP NHẬT: Thêm hàm để điều khiển việc thu/mở danh sách giải thưởng ---
+            togglePrizeList() {
+                this.elements.prizeTableWrapper.classList.toggle('expanded');
+                this.elements.prizeListToggle.classList.toggle('expanded');
+            },
 
-            setTimeout(() => {
-                const winningPrize = prizes[winnerIndex];
-                const newPromoCode = generatePromoCode();
+            // --- WHEEL DRAWING ---
+            assignPrizeColors() {
+                this.config.prizes.forEach(prize => {
+                    prize.color = this.config.colorMap[prize.type] || '#483D8B';
+                });
+            },
+
+            drawWheel() {
+                const { canvas, wheelContainer } = this.elements;
+                const size = Math.min(wheelContainer.clientWidth * 0.9, wheelContainer.clientHeight * 0.9);
+                canvas.width = size;
+                canvas.height = size;
+                this.state.radius = size / 2;
+
+                this.ctx.clearRect(0, 0, size, size);
+                this.ctx.save();
+                this.ctx.translate(this.state.radius, this.state.radius);
+
+                const anglePerPrize = (2 * Math.PI) / this.config.prizes.length;
+
+                this.config.prizes.forEach((prize, i) => {
+                    const startAngle = i * anglePerPrize;
+                    const gradient = this.ctx.createRadialGradient(0, 0, 0, 0, 0, this.state.radius);
+                    gradient.addColorStop(0, this.utils.adjustColor(prize.color, 40));
+                    gradient.addColorStop(0.7, prize.color);
+                    gradient.addColorStop(1, this.utils.adjustColor(prize.color, -20));
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, 0);
+                    this.ctx.arc(0, 0, this.state.radius - 5, startAngle, startAngle + anglePerPrize);
+                    this.ctx.closePath();
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fill();
+
+                    this.ctx.strokeStyle = 'rgba(212, 175, 55, 0.6)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+
+                    this.ctx.save();
+                    this.ctx.rotate(startAngle + anglePerPrize / 2);
+                    this.ctx.textAlign = 'right';
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                    this.ctx.shadowBlur = 4;
+                    this.ctx.font = `bold ${Math.max(10, Math.floor(this.state.radius * 0.055))}px Inter`;
+                    
+                    const words = prize.name.split(' ');
+                    const textRadius = this.state.radius * 0.75;
+                    if (words.length > 2) {
+                        const mid = Math.ceil(words.length / 2);
+                        this.ctx.fillText(words.slice(0, mid).join(' '), textRadius, -5);
+                        this.ctx.fillText(words.slice(mid).join(' '), textRadius, 12);
+                    } else {
+                        this.ctx.fillText(prize.name, textRadius, 5);
+                    }
+                    this.ctx.restore();
+                });
+                this.ctx.restore();
+            },
+            
+            // --- SPIN LOGIC ---
+            getWinnerIndex() {
+                const random = Math.random();
+                let cumulative = 0;
+                for (let i = 0; i < this.config.prizes.length; i++) {
+                    cumulative += this.config.prizes[i].probability;
+                    if (random < cumulative) return i;
+                }
+                return this.config.prizes.length - 1; 
+            },
+
+            spin() {
+                if (this.state.isSpinning || !this.canSpin()) return;
+
+                this.state.isSpinning = true;
+                this.elements.spinBtn.disabled = true;
+                this.elements.spinBtn.textContent = "ĐANG QUAY...";
+
+                const winnerIndex = this.getWinnerIndex();
+                const anglePerPrize = 360 / this.config.prizes.length;
+                const targetAngle = winnerIndex * anglePerPrize;
+                const randomOffset = (Math.random() - 0.5) * anglePerPrize * 0.8;
+                const totalRotation = this.state.currentRotation + (5 * 360) + (360 - targetAngle) - randomOffset;
+                
+                this.elements.canvas.style.transform = `rotate(${totalRotation}deg)`;
+                this.state.currentRotation = totalRotation % 360;
+
+                setTimeout(() => {
+                    const winningPrize = this.config.prizes[winnerIndex];
+                    const promoCode = this.utils.generatePromoCode();
+                    
+                    this.handleSpinCompletion(winningPrize, promoCode);
+                }, 4100);
+            },
+
+            handleSpinCompletion(prize, code) {
+                const { userId, phone } = this.utils.getUrlParams();
                 const payload = {
-                    userId:userId,phone:phone,prizeName:winningPrize.name,
-                    promoCode:newPromoCode,spinTimestamp:new Date().toISOString()
+                    userId, phone, prizeName: prize.fullName, prizeType: prize.type,
+                    promoCode: code, spinTimestamp: new Date().toISOString()
                 };
-                sendDataToWebhook(payload);
-                showResultModal(winningPrize, newPromoCode); // <-- UPDATE: Truyền cả object prize
-                localStorage.setItem(LAST_SPIN_KEY, Date.now());
-                // === UPDATE: Lưu thêm prize.type vào Local Storage ===
-                localStorage.setItem(LAST_WIN_KEY, JSON.stringify({ 
-                    prizeName: winningPrize.name, 
-                    promoCode: newPromoCode,
-                    prizeType: winningPrize.type // <-- Dòng mới
+                this.utils.sendDataToWebhook(payload);
+                this.showResultModal(prize, code);
+
+                const extraSpins = this.utils.getExtraSpins();
+                if (extraSpins > 0) {
+                    this.utils.setExtraSpins(extraSpins - 1);
+                } else {
+                    localStorage.setItem(this.config.localStorageKeys.LAST_SPIN, Date.now());
+                }
+                
+                localStorage.setItem(this.config.localStorageKeys.LAST_WIN, JSON.stringify({
+                    prizeName: prize.fullName, 
+                    promoCode: code, 
+                    prizeType: prize.type
                 }));
-                checkCooldown();
-                isSpinning = false;
-                canvas.style.transition = 'none';
-                canvas.style.transform = `rotate(${totalRotationDeg % 360}deg)`;
-            }, 6100); 
-        }
 
-        // === UPDATE: Cập nhật hàm để xử lý hiển thị có điều kiện ===
-        function showResultModal(prize, promoCode) {
-            prizeResultEl.textContent = prize.name;
-            promoCodeEl.textContent = promoCode;
+                this.state.isSpinning = false;
+                this.updateUIState();
+            },
 
-            // Kiểm tra nếu là giải v70 thì hiển thị thông báo đặc biệt
-            if (prize.type === 'v70') {
-                prizeConditionEl.textContent = 'Áp dụng với một số sản phẩm nhất định. Liên hệ Zalo để mua hàng.';
-            } else {
-                prizeConditionEl.textContent = ''; // Xóa nội dung nếu là giải khác
+            // --- UI AND STATE MANAGEMENT ---
+            updateUIState() {
+                const extraSpins = this.utils.getExtraSpins();
+
+                if (extraSpins > 0) {
+                    this.elements.extraSpinsBadge.textContent = extraSpins;
+                    this.elements.extraSpinsBadge.classList.remove('hidden');
+                } else {
+                    this.elements.extraSpinsBadge.classList.add('hidden');
+                }
+
+                if (this.canSpin()) {
+                    if (this.state.countdownInterval) clearInterval(this.state.countdownInterval);
+                    this.elements.spinBtn.disabled = this.state.isSpinning;
+                    this.elements.spinBtn.innerHTML = this.state.isSpinning ? "ĐANG QUAY..." : "QUAY";
+                    this.elements.spinBtn.style.fontSize = "0.9rem";
+                    
+                    if (localStorage.getItem(this.config.localStorageKeys.LAST_WIN)) {
+                        this.elements.viewLastCodeBtn.classList.remove("hidden");
+                    } else {
+                        this.elements.viewLastCodeBtn.classList.add("hidden");
+                    }
+                    return;
+                }
+                
+                this.elements.spinBtn.disabled = true;
+                this.elements.viewLastCodeBtn.classList.remove("hidden");
+
+                if (this.state.countdownInterval) clearInterval(this.state.countdownInterval);
+
+                const lastSpinTimestamp = parseInt(localStorage.getItem(this.config.localStorageKeys.LAST_SPIN));
+                const cooldownTime = this.config.COOLDOWN_HOURS * 3600 * 1000;
+
+                this.state.countdownInterval = setInterval(() => {
+                    const remainingTime = cooldownTime - (Date.now() - lastSpinTimestamp);
+                    if (remainingTime <= 0) {
+                        clearInterval(this.state.countdownInterval);
+                        localStorage.removeItem(this.config.localStorageKeys.LAST_SPIN);
+                        localStorage.removeItem(this.config.localStorageKeys.LAST_WIN);
+                        this.updateUIState();
+                    } else {
+                        const h = Math.floor(remainingTime / 3600000);
+                        const m = Math.floor((remainingTime % 3600000) / 60000);
+                        const s = Math.floor((remainingTime % 60000) / 1000);
+                        this.elements.spinBtn.style.fontSize = "0.6rem";
+                        this.elements.spinBtn.innerHTML = `Còn lại<br>${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                    }
+                }, 1000);
+            },
+
+            canSpin() {
+                if (this.utils.getExtraSpins() > 0) return true;
+                const lastSpin = localStorage.getItem(this.config.localStorageKeys.LAST_SPIN);
+                if (!lastSpin) return true;
+                const cooldownMs = this.config.COOLDOWN_HOURS * 3600 * 1000;
+                return (Date.now() - parseInt(lastSpin)) >= cooldownMs;
+            },
+            
+            checkPassword() {
+                const password = this.elements.passwordInput.value.trim();
+                if (password === this.config.SECRET_PASSWORD) {
+                    const currentExtraSpins = this.utils.getExtraSpins();
+                    this.utils.setExtraSpins(currentExtraSpins + 1);
+                    this.toggleModal(this.elements.passwordModal, false);
+                    this.updateUIState();
+                    alert('🎉 Chúc mừng! Bạn đã nhận được 1 lượt quay thêm!');
+                } else {
+                    alert('❌ Mật khẩu không đúng. Vui lòng thử lại!');
+                    this.elements.passwordInput.value = '';
+                    this.elements.passwordInput.focus();
+                }
+            },
+
+            // --- MODALS ---
+            toggleModal(modalElement, show) {
+                if (show) {
+                    modalElement.classList.add("show");
+                    if(modalElement.id === 'password-modal') {
+                        this.elements.passwordInput.value = '';
+                        this.elements.passwordInput.focus();
+                    }
+                } else {
+                    modalElement.classList.remove("show");
+                }
+            },
+
+            showResultModal(prize, promoCode) {
+                this.elements.prizeResultEl.textContent = prize.fullName; 
+                this.elements.promoCodeEl.textContent = promoCode;
+                let conditionText = '';
+                if (prize.type === 'v70' || prize.type === 'v60') {
+                    conditionText = 'Áp dụng với một số sản phẩm nhất định. Liên hệ Zalo để mua hàng.';
+                } else if (prize.type.includes('combo')) {
+                    conditionText = 'Liên hệ nhân viên để được tư vấn chi tiết về combo.';
+                }
+                this.elements.prizeConditionEl.textContent = conditionText;
+                this.toggleModal(this.elements.resultModal, true);
+            },
+
+            showLastWin() {
+                const lastWinData = localStorage.getItem(this.config.localStorageKeys.LAST_WIN);
+                if (lastWinData) {
+                    const { prizeName, promoCode, prizeType } = JSON.parse(lastWinData);
+                    const pseudoPrize = { fullName: prizeName, type: prizeType || '' };
+                    this.showResultModal(pseudoPrize, promoCode);
+                }
+            },
+            
+            // --- PARTICLE EFFECT ---
+            createParticles() {
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.animationDelay = `${Math.random() * 25}s`;
+                    particle.style.animationDuration = `${Math.random() * 15 + 15}s`;
+                    this.elements.particlesContainer.appendChild(particle);
+                }
+            },
+
+            // --- UTILITY FUNCTIONS ---
+            utils: {
+                getExtraSpins() {
+                    return parseInt(localStorage.getItem(app.config.localStorageKeys.EXTRA_SPINS) || '0');
+                },
+                setExtraSpins(count) {
+                    localStorage.setItem(app.config.localStorageKeys.EXTRA_SPINS, count.toString());
+                },
+                generatePromoCode(length = 8) {
+                    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                    let result = Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+                    return `${result.slice(0, 4)}-${result.slice(4)}`;
+                },
+                getUrlParams() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return {
+                        userId: urlParams.get('user_id'),
+                        phone: urlParams.get('phone')
+                    };
+                },
+                async sendDataToWebhook(data) {
+                    try {
+                        const response = await fetch(app.config.WEBHOOK_URL, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(data)
+                        });
+                        console.log(response.ok ? "Webhook sent successfully!" : `Webhook failed: ${response.statusText}`);
+                    } catch (error) {
+                        console.error("Error sending webhook:", error);
+                    }
+                },
+                adjustColor(hex, percent) {
+                    let r = parseInt(hex.slice(1, 3), 16),
+                        g = parseInt(hex.slice(3, 5), 16),
+                        b = parseInt(hex.slice(5, 7), 16);
+                    const t = percent < 0 ? 0 : 255;
+                    const p = Math.abs(percent) / 100;
+                    r = Math.round((t - r) * p) + r;
+                    g = Math.round((t - g) * p) + g;
+                    b = Math.round((t - b) * p) + b;
+                    return `#${(r * 65536 + g * 256 + b).toString(16).padStart(6, '0')}`;
+                }
             }
+        };
 
-            resultModal.classList.add("show");
-        }
-        function closeModal(){resultModal.classList.remove("show")}
-        function checkCooldown(){const a=localStorage.getItem(LAST_SPIN_KEY);if(!a)return spinBtn.disabled=!1,spinBtn.textContent="Quay",void viewLastCodeBtn.classList.add("hidden");const t=864e5,o=Date.now()-a;const lastSpinTimestamp = parseInt(a);if(o<t){spinBtn.disabled=!0,viewLastCodeBtn.classList.remove("hidden"),countdownInterval&&clearInterval(countdownInterval),countdownInterval=setInterval(()=>{const a=t-(Date.now()-lastSpinTimestamp);a<=0?(clearInterval(countdownInterval),spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)):(spinBtn.style.fontSize="0.9rem",spinBtn.textContent=`Vui lòng\nquay lại sau\n${String(Math.floor(a/36e5)).padStart(2,"0")}:${String(Math.floor(a%36e5/6e4)).padStart(2,"0")}:${String(Math.floor(a%6e4/1e3)).padStart(2,"0")}`)},1e3)}else spinBtn.disabled=!1,spinBtn.style.fontSize="1.5rem",spinBtn.textContent="Quay",viewLastCodeBtn.classList.add("hidden"),localStorage.removeItem(LAST_SPIN_KEY),localStorage.removeItem(LAST_WIN_KEY)}
-        
-        // === UPDATE: Cập nhật event listener để đọc prizeType từ Local Storage ===
-        viewLastCodeBtn.addEventListener('click', () => {
-            const lastWinData = localStorage.getItem(LAST_WIN_KEY);
-            if (lastWinData) {
-                const { prizeName, promoCode, prizeType } = JSON.parse(lastWinData);
-                // Tạo lại prize object để truyền vào hàm showResultModal
-                const prize = { name: prizeName, type: prizeType || '' }; // || '' để tránh lỗi nếu dữ liệu cũ không có type
-                showResultModal(prize, promoCode);
-            }
-        });
-
-        spinBtn.addEventListener('click', spin);
-        modalCloseBtn.addEventListener('click', closeModal);
-        resultModal.addEventListener('click', (e) => { if (e.target === resultModal) closeModal(); });
-
-        drawWheel();
-        checkCooldown();
+        // Run the application
+        document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>
 </html>
