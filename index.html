@@ -648,7 +648,7 @@
             // --- CONFIGURATION ---
             config: {
                 COOLDOWN_HOURS: 24,
-                SECRET_PASSWORD: '12123131',
+                SECRET_PASSWORD: '2525',
                 WEBHOOK_URL: "https://hook.us2.make.com/kyk3fhqa8sdy6nxqx2q9dmsjeat432k2",
                 localStorageKeys: {
                     LAST_SPIN: 'lastSpinTimestamp',
@@ -838,12 +838,11 @@
             },
 
             handleSpinCompletion(prize, code) {
-                const { userId, phone, displayName, name } = this.utils.getUrlParams();
+                const { userId, phone, displayName } = this.utils.getUrlParams();
                 const payload = {
                     userId,
                     phone,
                     displayName,
-                    name,
                     prizeName: prize.fullName,
                     prizeType: prize.type,
                     promoCode: code, spinTimestamp: new Date().toISOString()
@@ -955,8 +954,8 @@
             },
 
             showResultModal(prize, promoCode) {
-                const { displayName, name, phone } = this.utils.getUrlParams();
-                const displayLabel = displayName || name || '(trống)';
+                const { displayName, phone } = this.utils.getUrlParams();
+                const displayLabel = displayName || '(trống)';
                 const phoneLabel = phone || '(trống)';
 
                 this.elements.winnerGreeting.textContent = `Chúc mừng bạn ${displayLabel} đã trúng:`;
@@ -1008,13 +1007,45 @@
                     return `${result.slice(0, 4)}-${result.slice(4)}`;
                 },
                 getUrlParams() {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    return {
-                        userId: urlParams.get('user_id'),
-                        phone: urlParams.get('phone'),
-                        displayName: urlParams.get('display_name'),
-                        name: urlParams.get('name')
+                    const getParam = (key) => {
+                        const rawValue = this.getRawQueryParam(key);
+                        if (rawValue === null) return null;
+                        return this.decodeQueryParam(rawValue);
                     };
+                    return {
+                        userId: getParam('user_id'),
+                        phone: getParam('phone'),
+                        displayName: getParam('display_name')
+                    };
+                },
+                getRawQueryParam(key) {
+                    const query = window.location.search.slice(1);
+                    if (!query) return null;
+                    const parts = query.split('&');
+                    for (const part of parts) {
+                        if (!part) continue;
+                        const [k, v = ''] = part.split('=');
+                        if (k === key) return v;
+                    }
+                    return null;
+                },
+                decodeQueryParam(rawValue) {
+                    const normalized = rawValue.replace(/\+/g, '%20');
+                    try {
+                        const decoded = decodeURIComponent(normalized);
+                        if (!decoded.includes('\uFFFD')) return decoded;
+                    } catch (error) {
+                        // Fall through to legacy decoding.
+                    }
+                    try {
+                        const byteString = normalized.replace(/%([0-9A-Fa-f]{2})/g, (_, hex) =>
+                            String.fromCharCode(parseInt(hex, 16))
+                        );
+                        const bytes = Uint8Array.from(byteString, (char) => char.charCodeAt(0));
+                        return new TextDecoder('windows-1252').decode(bytes);
+                    } catch (error) {
+                        return rawValue;
+                    }
                 },
                 async sendDataToWebhook(data) {
                     try {
