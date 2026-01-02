@@ -387,6 +387,13 @@
             line-height: 1.4;
         }
 
+        .prize-stock-note {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.75);
+            margin: 6px 0 12px;
+            line-height: 1.4;
+        }
+
         #promo-code {
             display: inline-block;
             background: linear-gradient(45deg, var(--accent-gold), #F4E4BC);
@@ -617,6 +624,7 @@
             <div id="winner-greeting" class="prize-announcement"></div>
             <div id="prize-result"></div>
             <div id="prize-condition"></div>
+            <div class="prize-stock-note">Số lượng quà tặng có hạn, vui lòng liên hệ nhân viên nhận sớm trước khi hết.</div>
             <div id="promo-code-label" class="promo-code-label"></div>
             <div id="promo-code"></div>
             <button id="modal-close-btn" class="modal-close-btn">Đóng</button>
@@ -676,7 +684,8 @@
                 isSpinning: false,
                 countdownInterval: null,
                 currentRotation: 0,
-                radius: 0
+                radius: 0,
+                audioContext: null
             },
 
             // --- DOM ELEMENTS ---
@@ -819,6 +828,7 @@
                 this.state.isSpinning = true;
                 this.elements.spinBtn.disabled = true;
                 this.elements.spinBtn.textContent = "ĐANG QUAY...";
+                this.utils.playSpinSound();
 
                 const winnerIndex = this.getWinnerIndex();
                 const anglePerPrize = 360 / this.config.prizes.length;
@@ -1069,6 +1079,38 @@
                     g = Math.round((t - g) * p) + g;
                     b = Math.round((t - b) * p) + b;
                     return `#${(r * 65536 + g * 256 + b).toString(16).padStart(6, '0')}`;
+                },
+                getAudioContext() {
+                    if (!app.state.audioContext) {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        if (!AudioCtx) return null;
+                        app.state.audioContext = new AudioCtx();
+                    }
+                    if (app.state.audioContext.state === 'suspended') {
+                        app.state.audioContext.resume().catch(() => {});
+                    }
+                    return app.state.audioContext;
+                },
+                playSpinSound() {
+                    const ctx = this.getAudioContext();
+                    if (!ctx) return;
+
+                    const now = ctx.currentTime;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(700, now + 0.25);
+                    osc.frequency.exponentialRampToValueAtTime(260, now + 0.9);
+
+                    gain.gain.setValueAtTime(0.0001, now);
+                    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+
+                    osc.connect(gain).connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.95);
                 }
             }
         };
