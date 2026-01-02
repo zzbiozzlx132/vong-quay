@@ -614,10 +614,10 @@
     <div id="result-modal" class="modal-overlay" role="dialog" aria-modal="true">
         <div class="modal-content">
             <h2>CHÚC MỪNG! 🎉</h2>
-            <div class="prize-announcement">Bạn đã trúng:</div>
+            <div id="winner-greeting" class="prize-announcement"></div>
             <div id="prize-result"></div>
             <div id="prize-condition"></div>
-            <div class="promo-code-label">Vui lòng đưa mã dưới đây cho nhân viên để được nhận khuyến mãi:</div>
+            <div id="promo-code-label" class="promo-code-label"></div>
             <div id="promo-code"></div>
             <button id="modal-close-btn" class="modal-close-btn">Đóng</button>
         </div>
@@ -648,7 +648,7 @@
             // --- CONFIGURATION ---
             config: {
                 COOLDOWN_HOURS: 24,
-                SECRET_PASSWORD: '252525',
+                SECRET_PASSWORD: '12123131',
                 WEBHOOK_URL: "https://hook.us2.make.com/kyk3fhqa8sdy6nxqx2q9dmsjeat432k2",
                 localStorageKeys: {
                     LAST_SPIN: 'lastSpinTimestamp',
@@ -688,6 +688,8 @@
                 prizeResultEl: document.getElementById('prize-result'),
                 promoCodeEl: document.getElementById('promo-code'),
                 prizeConditionEl: document.getElementById('prize-condition'),
+                winnerGreeting: document.getElementById('winner-greeting'),
+                promoCodeLabel: document.getElementById('promo-code-label'),
                 modalCloseBtn: document.getElementById('modal-close-btn'),
                 viewLastCodeBtn: document.getElementById('view-last-code-btn'),
                 fabAddSpinBtn: document.getElementById('fab-add-spin-btn'),
@@ -953,6 +955,12 @@
             },
 
             showResultModal(prize, promoCode) {
+                const { displayName, name, phone } = this.utils.getUrlParams();
+                const displayLabel = displayName || name || '(trống)';
+                const phoneLabel = phone || '(trống)';
+
+                this.elements.winnerGreeting.textContent = `Chúc mừng bạn ${displayLabel} đã trúng:`;
+                this.elements.promoCodeLabel.textContent = `Vui lòng đưa mã dưới đây cho nhân viên để nhận được khuyến mãi (SĐT: ${phoneLabel})`;
                 this.elements.prizeResultEl.textContent = prize.fullName; 
                 this.elements.promoCodeEl.textContent = promoCode;
                 let conditionText = '';
