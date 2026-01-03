@@ -291,7 +291,7 @@
         }
 
         .prize-table-wrapper.expanded {
-            max-height: 350px;
+            max-height: 450px; /* Tăng chiều cao để chứa thêm giải thưởng */
         }
 
         .prize-table {
@@ -609,8 +609,11 @@
                         <tr><td>1 Ví da cao cấp</td></tr>
                         <tr><td>1 Thắt lưng da cao cấp</td></tr>
                         <tr><td>1 Giày loafer nam</td></tr>
-                        <tr><td>1 Voucher mua hàng giảm 70%</td></tr>
                         <tr><td>1 Voucher mua hàng giảm 20%</td></tr>
+                        <tr><td>1 Voucher mua hàng giảm 30%</td></tr>
+                        <tr><td>1 Voucher mua hàng giảm 40%</td></tr>
+                        <tr><td>1 Voucher mua hàng giảm 50%</td></tr>
+                        <tr><td>1 Voucher mua hàng giảm 70%</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -664,18 +667,24 @@
                     EXTRA_SPINS: 'extraSpins'
                 },
                 prizes: [
-                    { name: "1 Ví da cao cấp", fullName: "1 Ví da cao cấp", type: "wallet", probability: 0.30 },
-                    { name: "1 Thắt lưng da cao cấp", fullName: "1 Thắt lưng da cao cấp", type: "belt", probability: 0.20 },
-                    { name: "1 Giày loafer nam", fullName: "1 Giày loafer nam", type: "loafer", probability: 0.20 },
-                    { name: "1 Voucher 70%", fullName: "1 Voucher mua hàng giảm 70%", type: "v70", probability: 0.10 },
-                    { name: "1 Voucher 20%", fullName: "1 Voucher mua hàng giảm 20%", type: "v20", probability: 0.20 }
+                    { name: "1 Ví da", fullName: "1 Ví da cao cấp", type: "wallet", probability: 0.04 },
+                    { name: "1 Thắt lưng", fullName: "1 Thắt lưng da cao cấp", type: "belt", probability: 0.015 },
+                    { name: "1 Giày Loafer", fullName: "1 Giày loafer nam", type: "loafer", probability: 0.00 },
+                    { name: "Voucher 20%", fullName: "1 Voucher mua hàng giảm 20%", type: "v20", probability: 0.80 },
+                    { name: "Voucher 30%", fullName: "1 Voucher mua hàng giảm 30%", type: "v30", probability: 0.07 },
+                    { name: "Voucher 40%", fullName: "1 Voucher mua hàng giảm 40%", type: "v40", probability: 0.04 },
+                    { name: "Voucher 50%", fullName: "1 Voucher mua hàng giảm 50%", type: "v50", probability: 0.03 },
+                    { name: "Voucher 70%", fullName: "1 Voucher mua hàng giảm 70%", type: "v70", probability: 0.005 }
                 ],
                 colorMap: {
                     'wallet': '#8B4513',
                     'belt': '#4B0082',
                     'loafer': '#006400',
-                    'v70': '#B8860B',
-                    'v20': '#2F4F4F'
+                    'v20': '#2F4F4F',
+                    'v30': '#008080',
+                    'v40': '#4682B4',
+                    'v50': '#800080',
+                    'v70': '#B8860B'
                 }
             },
 
@@ -973,10 +982,8 @@
                 this.elements.prizeResultEl.textContent = prize.fullName; 
                 this.elements.promoCodeEl.textContent = promoCode;
                 let conditionText = '';
-                if (prize.type === 'v70' || prize.type === 'v60') {
-                    conditionText = 'Áp dụng với một số sản phẩm nhất định. Liên hệ Zalo để mua hàng.';
-                } else if (prize.type.includes('combo')) {
-                    conditionText = 'Liên hệ nhân viên để được tư vấn chi tiết về combo.';
+                if (prize.type.includes('v') || prize.type.includes('combo')) {
+                    conditionText = 'Áp dụng với một số sản phẩm nhất định. Liên hệ nhân viên để được tư vấn.';
                 }
                 this.elements.prizeConditionEl.textContent = conditionText;
                 this.toggleModal(this.elements.resultModal, true);
